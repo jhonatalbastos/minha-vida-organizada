@@ -7,6 +7,10 @@
   "orientation": "portrait",
   "background_color": "#F1F5F9",
   "theme_color": "#2563EB",
+  "categories": ["lifestyle", "health", "productivity"],
+  "lang": "pt-BR",
+  "scope": ".",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "icons/icon.svg",
@@ -27,8 +31,58 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["lifestyle", "health", "productivity"],
-  "lang": "pt-BR",
-  "scope": ".",
-  "prefer_related_applications": false
+  "shortcuts": [
+    {
+      "name": "📋 Tarefas de Hoje",
+      "short_name": "Hoje",
+      "description": "Ver a rotina e tarefas do dia",
+      "url": "index.html",
+      "icons": [
+        {
+          "src": "icons/icon.svg",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "➕ Registrar Peso",
+      "short_name": "Peso",
+      "description": "Adicionar peso e sono de hoje",
+      "url": "index.html#peso",
+      "icons": [
+        {
+          "src": "icons/icon.svg",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "💧 Marcar Água",
+      "short_name": "Água",
+      "description": "Registrar consumo de água",
+      "url": "index.html#agua",
+      "icons": [
+        {
+          "src": "icons/icon.svg",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "🛒 Lista de Compras",
+      "short_name": "Compras",
+      "description": "Ver lista de compras do mercado",
+      "url": "index.html#compras",
+      "icons": [
+        {
+          "src": "icons/icon.svg",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ]
 }

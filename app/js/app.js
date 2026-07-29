@@ -1,5 +1,5 @@
 /* ===================================================================
-   Minha Vida Organizada - PWA App
+   Minha Vida Organizada - PWA App v2.0
    Complete application logic
    =================================================================== */
 
@@ -49,6 +49,10 @@
     ]
   };
 
+  const WATER_CUPS = 8;
+  const WATER_ML_PER_CUP = 250;
+  const WATER_TOTAL_L = (WATER_CUPS * WATER_ML_PER_CUP) / 1000;
+
   const WEEKLY_TASKS = {
     'Segunda': ['Lixo', 'Limpar bancada'],
     'Terça': ['Tirar pó'],
@@ -60,6 +64,7 @@
   };
 
   const DAYS_OF_WEEK = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+  const DAYS_ABBR = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
   const MEALS = [
     { name: 'Café', time: '06:10', emoji: '🥣', desc: 'Overnight Oats (aveia + whey + chia + leite + banana)', recipe: '50g aveia, 30g whey, 15g chia, 150ml leite, 1 banana' },
@@ -140,18 +145,81 @@
     { day: 'Domingo', icon: '😴', activity: 'Descanso + Planejamento' }
   ];
 
+  // ===== LISTA DE COMPRAS COMPLETA =====
   const SHOPPING_ITEMS = [
-    { name: 'Lava-louças 8 serviços', cat: '🟡 Média', priority: 2 },
-    { name: 'Kit ganchos parede (capacete + jaqueta)', cat: '🔴 Alta', priority: 1 },
-    { name: 'Spot para chaves', cat: '🔴 Alta', priority: 1 },
-    { name: 'Sabonete facial neutro', cat: '🔴 Alta', priority: 1 },
-    { name: 'Protetor solar facial FPS 50', cat: '🔴 Alta', priority: 1 },
-    { name: 'Óleo para barba', cat: '🔴 Alta', priority: 1 },
-    { name: 'Aspirador vertical sem fio', cat: '🟡 Média', priority: 2 },
-    { name: 'Lâmpadas smart (kit 2-3)', cat: '🟡 Média', priority: 2 },
-    { name: 'Pomada capilar leve', cat: '🟡 Média', priority: 2 },
-    { name: 'Fechadura digital', cat: '🟢 Baixa', priority: 3 },
-    { name: 'Kit potes de vidro herméticos', cat: '🟢 Baixa', priority: 3 }
+    // 🥩 AÇOUGUE / PROTEÍNAS
+    { name: 'Peito de frango (1kg)', cat: '🥩 Açougue', priority: 1 },
+    { name: 'Patinho moído (500g)', cat: '🥩 Açougue', priority: 1 },
+    { name: 'Ovos (12 unid)', cat: '🥩 Açougue', priority: 1 },
+    { name: 'Atum enlatado (2 latas)', cat: '🥩 Açougue', priority: 2 },
+
+    // 🥗 FEIRA / HORTIFRUTI
+    { name: 'Banana (6-8 unid)', cat: '🥗 Hortifruti', priority: 1 },
+    { name: 'Maçã (4 unid)', cat: '🥗 Hortifruti', priority: 1 },
+    { name: 'Brócolis (1 maço)', cat: '🥗 Hortifruti', priority: 1 },
+    { name: 'Cenoura (3 unid)', cat: '🥗 Hortifruti', priority: 1 },
+    { name: 'Vagem (200g)', cat: '🥗 Hortifruti', priority: 2 },
+    { name: 'Alface crespa', cat: '🥗 Hortifruti', priority: 1 },
+    { name: 'Tomate (3 unid)', cat: '🥗 Hortifruti', priority: 1 },
+    { name: 'Alho (cabeça)', cat: '🥗 Hortifruti', priority: 2 },
+    { name: 'Cebola (2 unid)', cat: '🥗 Hortifruti', priority: 2 },
+    { name: 'Limão (3 unid)', cat: '🥗 Hortifruti', priority: 3 },
+    { name: 'Gengibre', cat: '🥗 Hortifruti', priority: 3 },
+    { name: 'Batata doce (3 unid)', cat: '🥗 Hortifruti', priority: 2 },
+
+    // 🥛 LATICÍNIOS / FRIOS
+    { name: 'Leite semidesnatado (1L)', cat: '🥛 Laticínios', priority: 1 },
+    { name: 'Iogurte natural (pote)', cat: '🥛 Laticínios', priority: 2 },
+    { name: 'Queijo minas ou muçarela (200g)', cat: '🥛 Laticínios', priority: 1 },
+    { name: 'Requeijão light', cat: '🥛 Laticínios', priority: 2 },
+
+    // 🍞 PADARIA / GRÃOS
+    { name: 'Pão integral (pacote)', cat: '🍞 Padaria', priority: 1 },
+    { name: 'Aveia em flocos (500g)', cat: '🍞 Padaria', priority: 1 },
+    { name: 'Arroz integral (1kg)', cat: '🍞 Padaria', priority: 1 },
+    { name: 'Quinoa em grãos (200g)', cat: '🍞 Padaria', priority: 3 },
+
+    // 🔴 SUPLEMENTOS / MERCEARIA
+    { name: 'Whey protein (1kg)', cat: '🔴 Suplementos', priority: 1 },
+    { name: 'Whey Uêvo ou similar', cat: '🔴 Suplementos', priority: 1 },
+    { name: 'Chia (200g)', cat: '🔴 Suplementos', priority: 1 },
+    { name: 'Linhaça dourada', cat: '🔴 Suplementos', priority: 2 },
+    { name: 'Castanha do pará (100g)', cat: '🔴 Suplementos', priority: 1 },
+    { name: 'Castanha de caju (100g)', cat: '🔴 Suplementos', priority: 2 },
+    { name: 'Pasta de amendoim', cat: '🔴 Suplementos', priority: 2 },
+
+    // 🛒 CASA / HIGIENE
+    { name: 'Azeite de oliva', cat: '🛒 Casa', priority: 2 },
+    { name: 'Sal marinho', cat: '🛒 Casa', priority: 2 },
+    { name: 'Temperos (páprica, orégano, curry)', cat: '🛒 Casa', priority: 3 },
+    { name: 'Papel alumínio', cat: '🛒 Casa', priority: 3 },
+    { name: 'Papel filme', cat: '🛒 Casa', priority: 3 },
+    { name: 'Detergente', cat: '🛒 Casa', priority: 2 },
+    { name: 'Esponja de louça (pacote)', cat: '🛒 Casa', priority: 2 },
+    { name: 'Saco de lixo (30L)', cat: '🛒 Casa', priority: 2 },
+    { name: 'Protetor solar facial FPS 50', cat: '🛒 Casa', priority: 1 },
+    { name: 'Sabonete facial neutro', cat: '🛒 Casa', priority: 1 },
+    { name: 'Óleo para barba', cat: '🛒 Casa', priority: 1 },
+    { name: 'Pomada capilar leve', cat: '🛒 Casa', priority: 2 },
+    { name: 'Papel higiênico (pacote 8)', cat: '🛒 Casa', priority: 1 },
+    { name: 'Água sanitária', cat: '🛒 Casa', priority: 2 },
+    { name: 'Desinfetante', cat: '🛒 Casa', priority: 2 },
+
+    // 📦 COMPRAS FUTURAS / INVESTIMENTO
+    { name: 'Lava-louças 8 serviços', cat: '📦 Investimento', priority: 4 },
+    { name: 'Kit ganchos parede (capacete + jaqueta)', cat: '📦 Investimento', priority: 4 },
+    { name: 'Spot para chaves', cat: '📦 Investimento', priority: 4 },
+    { name: 'Aspirador vertical sem fio', cat: '📦 Investimento', priority: 4 },
+    { name: 'Lâmpadas smart (kit 2-3)', cat: '📦 Investimento', priority: 4 },
+    { name: 'Fechadura digital', cat: '📦 Investimento', priority: 4 },
+    { name: 'Kit potes de vidro herméticos', cat: '📦 Investimento', priority: 4 },
+    { name: 'Kit elásticos de resistência', cat: '📦 Investimento', priority: 4 },
+    { name: 'Massagem desportiva (quinzenal)', cat: '📦 Investimento', priority: 4 }
+  ];
+
+  const SHOPPING_CATEGORIES = [
+    '🥩 Açougue', '🥗 Hortifruti', '🥛 Laticínios', '🍞 Padaria',
+    '🔴 Suplementos', '🛒 Casa', '📦 Investimento'
   ];
 
   const PLAN_INFO = [
@@ -170,17 +238,30 @@
   // STATE
   // ==================================================================
 
+  let _alarmsScheduled = false; // Guard para evitar double-scheduling
+
   const STATE = {
     currentView: 'hoje',
     currentSub: 'diarias',
     currentDayTab: null,
+    // Calendar navigation
+    currentDate: new Date().toISOString().split('T')[0],
+    // Schedule and tasks
     scheduleDone: {},
     tasksDone: {},
     shoppingDone: {},
+    // Water
     waterCount: 0,
+    waterDate: null,
+    // Daily log (weight + sleep per dateKey)
+    dailyLog: {},
+    // Measurements
     measurements: [],
     workoutLog: [],
     notes: [],
+    // Shopping filter
+    shoppingFilter: 'all',
+    // Settings
     startDate: '2026-08-01',
     initialWeight: 97
   };
@@ -194,6 +275,9 @@
     setupNavigation();
     setupSubNavigation();
     setupDateAndGreeting();
+    setupDateNavigation();
+    setupDailyLog();
+    setupShoppingCategories();
 
     // Render all views
     renderToday();
@@ -210,12 +294,16 @@
     setupWaterTracker();
     setupMeasurementForm();
     setupSettings();
+
+    // Notifications
     setupNotifications();
+    setupBadging();
 
-    // Register service worker
+    // Service Worker + alarm scheduling
     registerSW();
+    scheduleAlarms();
 
-    // Auto-update schedule highlight every minute
+    // Auto-update every minute
     setInterval(() => {
       updateScheduleHighlight();
       updateProgressRing();
@@ -247,9 +335,18 @@
     return d.toISOString().split('T')[0];
   }
 
+  function getDateFromKey(key) {
+    const parts = key.split('-').map(Number);
+    return new Date(parts[0], parts[1] - 1, parts[2]);
+  }
+
   function getDayName(date) {
     const d = date || new Date();
     return DAYS_OF_WEEK[d.getDay()];
+  }
+
+  function getDayNameFromKey(key) {
+    return getDayName(getDateFromKey(key));
   }
 
   function getScheduleForDay(date) {
@@ -261,14 +358,14 @@
   }
 
   function isItemDone(listKey, id, dateKey) {
-    const key = dateKey || getDateKey();
+    const key = dateKey || STATE.currentDate;
     if (!STATE[listKey]) STATE[listKey] = {};
     if (!STATE[listKey][key]) STATE[listKey][key] = [];
     return STATE[listKey][key].includes(id);
   }
 
   function toggleItemDone(listKey, id, dateKey) {
-    const key = dateKey || getDateKey();
+    const key = dateKey || STATE.currentDate;
     if (!STATE[listKey]) STATE[listKey] = {};
     if (!STATE[listKey][key]) STATE[listKey][key] = [];
     const arr = STATE[listKey][key];
@@ -279,12 +376,85 @@
   }
 
   function getPercentComplete(listKey, ids, dateKey) {
-    const key = dateKey || getDateKey();
+    const key = dateKey || STATE.currentDate;
     if (!ids || ids.length === 0) return 0;
     if (!STATE[listKey]) STATE[listKey] = {};
     if (!STATE[listKey][key]) STATE[listKey][key] = [];
     const done = ids.filter(id => STATE[listKey][key].includes(id));
     return Math.round((done.length / ids.length) * 100);
+  }
+
+  // ==================================================================
+  // DATE NAVIGATION
+  // ==================================================================
+
+  function setupDateNavigation() {
+    document.getElementById('btn-prev-day').addEventListener('click', () => {
+      const d = getDateFromKey(STATE.currentDate);
+      d.setDate(d.getDate() - 1);
+      STATE.currentDate = getDateKey(d);
+      saveState();
+      refreshTodayView();
+    });
+
+    document.getElementById('btn-next-day').addEventListener('click', () => {
+      const d = getDateFromKey(STATE.currentDate);
+      d.setDate(d.getDate() + 1);
+      STATE.currentDate = getDateKey(d);
+      saveState();
+      refreshTodayView();
+    });
+
+    document.getElementById('btn-today').addEventListener('click', () => {
+      STATE.currentDate = getDateKey();
+      saveState();
+      refreshTodayView();
+    });
+
+    document.getElementById('date-nav-display').addEventListener('click', () => {
+      // Quick jump: show date picker
+      const input = document.createElement('input');
+      input.type = 'date';
+      input.value = STATE.currentDate;
+      input.style.position = 'fixed';
+      input.style.top = '-100px';
+      input.style.left = '-100px';
+      document.body.appendChild(input);
+      input.addEventListener('change', e => {
+        STATE.currentDate = e.target.value;
+        saveState();
+        refreshTodayView();
+        document.body.removeChild(input);
+      });
+      input.addEventListener('blur', () => {
+        setTimeout(() => { if (document.body.contains(input)) document.body.removeChild(input); }, 500);
+      });
+      input.showPicker();
+    });
+  }
+
+  function refreshTodayView() {
+    updateDateDisplay();
+    renderSchedule();
+    renderDailyLog();
+    updateProgressRing();
+    // Reset water when viewing a different day
+    // (only today's water is tracked)
+  }
+
+  function updateDateDisplay() {
+    const date = getDateFromKey(STATE.currentDate);
+    const today = new Date();
+    const isToday = STATE.currentDate === getDateKey();
+
+    const dayName = getDayName(date);
+    const dayNum = date.getDate();
+    const monthNum = date.getMonth() + 1;
+
+    document.getElementById('nav-day-name').textContent = isToday ? 'Hoje' : dayName;
+    document.getElementById('nav-date').textContent =
+      `${String(dayNum).padStart(2, '0')}/${String(monthNum).padStart(2, '0')}`;
+    document.getElementById('day-label').textContent = getDayNameFromKey(STATE.currentDate);
   }
 
   // ==================================================================
@@ -298,6 +468,28 @@
         switchView(view);
       });
     });
+
+    // Handle hash-based navigation from shortcuts
+    if (window.location.hash) {
+      const hash = window.location.hash.replace('#', '');
+      if (hash === 'peso') {
+        setTimeout(() => {
+          switchView('hoje');
+          setTimeout(() => {
+            document.getElementById('input-daily-weight')?.focus();
+          }, 300);
+        }, 500);
+      } else if (hash === 'agua') {
+        setTimeout(() => switchView('hoje'), 500);
+      } else if (hash === 'compras') {
+        setTimeout(() => {
+          switchView('tarefas');
+          setTimeout(() => {
+            document.querySelector('.sub-nav-btn[data-sub="compras"]')?.click();
+          }, 300);
+        }, 500);
+      }
+    }
   }
 
   function switchView(view) {
@@ -309,10 +501,9 @@
     const targetBtn = document.querySelector(`.nav-btn[data-view="${view}"]`);
     if (targetBtn) targetBtn.classList.add('active');
 
-    // Re-render views when switching to them
-    if (view === 'hoje') renderToday();
-    else if (view === 'progresso') {
-      // Defer chart render to ensure container has width
+    if (view === 'hoje') {
+      refreshTodayView();
+    } else if (view === 'progresso') {
       renderProgress();
       setTimeout(() => renderChart(), 100);
     } else if (view === 'treinos') {
@@ -331,8 +522,7 @@
     document.querySelectorAll('.sub-nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const sub = btn.dataset.sub;
-        const parent = btn.closest('.sub-nav').parentElement.querySelector('.view') ||
-                       btn.closest('.view');
+        const parent = btn.closest('.sub-nav').parentElement;
         parent.querySelectorAll('.sub-nav-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         parent.querySelectorAll('.sub-view').forEach(v => v.classList.remove('active'));
@@ -363,10 +553,7 @@
     document.getElementById('greeting').textContent = greeting + ', Jhona 👋';
     document.getElementById('header-date').textContent = dayName + ', ' + dateStr;
 
-    const dayLabel = document.getElementById('day-label');
-    if (dayLabel) {
-      dayLabel.textContent = getDayName();
-    }
+    updateDateDisplay();
   }
 
   // ==================================================================
@@ -374,15 +561,19 @@
   // ==================================================================
 
   function renderToday() {
+    updateDateDisplay();
     renderSchedule();
     renderMeals();
     updateProgressRing();
+    setupWaterTracker();
+    renderDailyLog();
   }
 
   function renderSchedule() {
     const list = document.getElementById('schedule-list');
-    const schedule = getScheduleForDay();
-    const dateKey = getDateKey();
+    const date = getDateFromKey(STATE.currentDate);
+    const schedule = getScheduleForDay(date);
+    const dateKey = STATE.currentDate;
 
     list.innerHTML = schedule.map(item => {
       const done = isItemDone('scheduleDone', item.id, dateKey);
@@ -398,7 +589,7 @@
     }).join('');
 
     window.toggleScheduleDone = function(id) {
-      toggleItemDone('scheduleDone', id);
+      toggleItemDone('scheduleDone', id, STATE.currentDate);
       renderSchedule();
       updateProgressRing();
     };
@@ -410,9 +601,11 @@
     const now = new Date();
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
     const items = document.querySelectorAll('.schedule-item');
+    const isToday = STATE.currentDate === getDateKey();
 
     items.forEach(item => {
       item.classList.remove('now');
+      if (!isToday) return;
       const timeStr = item.querySelector('.schedule-time')?.textContent || '';
       if (isCurrentTime(timeStr, currentMinutes)) {
         item.classList.add('now');
@@ -421,7 +614,6 @@
   }
 
   function isCurrentTime(timeStr, currentMinutes) {
-    // Parse time ranges like "05:05–05:35" or "18:15+"
     const match = timeStr.match(/(\d{1,2}):(\d{2})/);
     if (!match) return false;
     const startMinutes = parseInt(match[1]) * 60 + parseInt(match[2]);
@@ -436,7 +628,6 @@
       return currentMinutes >= startMinutes && currentMinutes <= endMinutes;
     }
 
-    // Exact time or ranged time
     if (timeStr === '22:00') {
       return currentMinutes >= 22 * 60 && currentMinutes < 22 * 60 + 30;
     }
@@ -447,12 +638,13 @@
   function isCurrentTimeSlot(item) {
     const now = new Date();
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
-    return isCurrentTime(item.time, currentMinutes);
+    return STATE.currentDate === getDateKey() && isCurrentTime(item.time, currentMinutes);
   }
 
   function updateProgressRing() {
-    const schedule = getScheduleForDay();
-    const dateKey = getDateKey();
+    const date = getDateFromKey(STATE.currentDate);
+    const schedule = getScheduleForDay(date);
+    const dateKey = STATE.currentDate;
     const ids = schedule.map(s => s.id);
     const done = ids.filter(id => isItemDone('scheduleDone', id, dateKey));
     const pct = ids.length > 0 ? Math.round((done.length / ids.length) * 100) : 0;
@@ -463,7 +655,6 @@
     circle.style.strokeDashoffset = offset;
     document.getElementById('progress-percent').textContent = pct + '%';
 
-    // Update streak
     updateStreak();
   }
 
@@ -513,7 +704,185 @@
   }
 
   // ==================================================================
-  // WATER TRACKER
+  // DAILY LOG (WEIGHT + SLEEP + NOTE + COMPLETE DAY)
+  // ==================================================================
+
+  function setupDailyLog() {
+    // --- Weight ---
+    document.getElementById('btn-save-weight').addEventListener('click', () => {
+      const val = parseFloat(document.getElementById('input-daily-weight').value);
+      if (!val || val < 30 || val > 200) return;
+      if (!STATE.dailyLog) STATE.dailyLog = {};
+      if (!STATE.dailyLog[STATE.currentDate]) STATE.dailyLog[STATE.currentDate] = {};
+      STATE.dailyLog[STATE.currentDate].weight = val;
+      saveState();
+      document.getElementById('input-daily-weight').value = '';
+      renderDailyLog();
+      renderGoals();
+    });
+
+    document.getElementById('btn-save-sleep').addEventListener('click', () => {
+      const val = parseFloat(document.getElementById('input-daily-sleep').value);
+      if (!val || val < 0 || val > 24) return;
+      if (!STATE.dailyLog) STATE.dailyLog = {};
+      if (!STATE.dailyLog[STATE.currentDate]) STATE.dailyLog[STATE.currentDate] = {};
+      STATE.dailyLog[STATE.currentDate].sleep = val;
+      saveState();
+      document.getElementById('input-daily-sleep').value = '';
+      renderDailyLog();
+    });
+
+    // --- Daily Note ---
+    document.getElementById('btn-save-note-day')?.addEventListener('click', () => {
+      const val = document.getElementById('daily-note-input').value.trim();
+      if (!val) return;
+      if (!STATE.dailyLog) STATE.dailyLog = {};
+      if (!STATE.dailyLog[STATE.currentDate]) STATE.dailyLog[STATE.currentDate] = {};
+      STATE.dailyLog[STATE.currentDate].note = val;
+      saveState();
+      document.getElementById('daily-note-input').value = '';
+      renderDailyLog();
+    });
+
+    document.getElementById('daily-note-input')?.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        document.getElementById('btn-save-note-day')?.click();
+      }
+    });
+
+    // --- Complete Day Button ---
+    document.getElementById('btn-complete-day')?.addEventListener('click', () => {
+      const date = getDateFromKey(STATE.currentDate);
+      const schedule = getScheduleForDay(date);
+      const dateKey = STATE.currentDate;
+      const allDone = schedule.every(item => isItemDone('scheduleDone', item.id, dateKey));
+
+      if (allDone) {
+        showModal('✅', 'Este dia já está completo! 🎉');
+        return;
+      }
+
+      showModal(
+        '✅ Concluir dia?',
+        `Marcar todas as ${schedule.length} atividades como concluídas?`,
+        () => {
+          schedule.forEach(item => {
+            if (!isItemDone('scheduleDone', item.id, dateKey)) {
+              toggleItemDone('scheduleDone', item.id, dateKey);
+            }
+          });
+          renderSchedule();
+          updateProgressRing();
+          renderDailyLog();
+          showModal('🎉', 'Dia concluído! Continue assim! 💪');
+        }
+      );
+    });
+  }
+
+  function renderDailyLog() {
+    const display = document.getElementById('daily-log-display');
+    const log = STATE.dailyLog && STATE.dailyLog[STATE.currentDate];
+
+    // Show latest weight in stat box
+    updateStatsFromLog();
+
+    // --- Render weight/sleep display ---
+    if (!log || (!log.weight && !log.sleep)) {
+      display.innerHTML = '<span>Nada registrado ainda 📝</span>';
+    } else {
+      display.innerHTML = '';
+      if (log.weight) {
+        display.innerHTML += `<span>⚖️ <strong>${log.weight} kg</strong></span>`;
+      }
+      if (log.sleep) {
+        display.innerHTML += `<span>😴 <strong>${log.sleep}h</strong> de sono</span>`;
+      }
+    }
+
+    // --- Render daily note ---
+    const noteDisplay = document.getElementById('daily-note-display');
+    const noteInput = document.getElementById('daily-note-input');
+    if (log && log.note && log.note.trim()) {
+      noteDisplay.innerHTML = `
+        📝 ${escapeHtml(log.note)}
+        <button class="note-edit-btn" onclick="editDailyNote()">✏️</button>
+      `;
+      noteDisplay.style.display = 'block';
+      noteInput.style.display = 'none';
+    } else {
+      noteDisplay.style.display = 'none';
+      noteInput.style.display = '';
+    }
+
+    window.editDailyNote = function() {
+      const logData = STATE.dailyLog && STATE.dailyLog[STATE.currentDate];
+      if (logData && logData.note) {
+        document.getElementById('daily-note-input').value = logData.note;
+      }
+      document.getElementById('daily-note-display').style.display = 'none';
+      document.getElementById('daily-note-input').style.display = '';
+      document.getElementById('daily-note-input').focus();
+    };
+
+    // --- Render complete day button ---
+    const btn = document.getElementById('btn-complete-day');
+    if (btn) {
+      const date = getDateFromKey(STATE.currentDate);
+      const schedule = getScheduleForDay(date);
+      const dateKey = STATE.currentDate;
+      const allDone = schedule.every(item => isItemDone('scheduleDone', item.id, dateKey));
+      if (allDone) {
+        btn.textContent = '🎉 Dia completo!';
+        btn.classList.add('completed');
+      } else {
+        btn.textContent = '✅ Marcar dia como concluído';
+        btn.classList.remove('completed');
+      }
+    }
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function updateStatsFromLog() {
+    // Show latest weight in the quick stats
+    const allLogs = STATE.dailyLog || {};
+    const todayLog = allLogs[getDateKey()];
+    const weightEl = document.getElementById('stat-weight');
+    const bfEl = document.getElementById('stat-bf');
+
+    if (todayLog && todayLog.weight) {
+      weightEl.textContent = todayLog.weight;
+    } else {
+      // Find last logged weight
+      let lastWeight = STATE.initialWeight || 97;
+      const sortedKeys = Object.keys(allLogs).sort().reverse();
+      for (const key of sortedKeys) {
+        if (allLogs[key].weight) {
+          lastWeight = allLogs[key].weight;
+          break;
+        }
+      }
+      weightEl.textContent = lastWeight;
+    }
+
+    // BF from measurements
+    const measurements = STATE.measurements || [];
+    if (measurements.length > 0) {
+      const last = measurements[measurements.length - 1];
+      bfEl.textContent = last.bf ? last.bf : '--';
+    } else {
+      bfEl.textContent = '--';
+    }
+  }
+
+  // ==================================================================
+  // WATER TRACKER (with liters)
   // ==================================================================
 
   function setupWaterTracker() {
@@ -524,14 +893,28 @@
       STATE.waterDate = today;
       saveState();
     }
+    renderWaterDisplay();
+  }
+
+  function renderWaterDisplay() {
     renderWaterCups();
-    document.getElementById('water-counter').textContent = STATE.waterCount + ' / 8 copos';
+    const currentLiters = ((STATE.waterCount * WATER_ML_PER_CUP) / 1000).toFixed(1);
+    const totalLiters = WATER_TOTAL_L.toFixed(1);
+    document.getElementById('water-counter').textContent = `${STATE.waterCount} / ${WATER_CUPS} copos`;
+
+    // Liter bar
+    const pct = Math.min(100, (STATE.waterCount / WATER_CUPS) * 100);
+    const fill = document.getElementById('water-liter-fill');
+    if (fill) fill.style.width = pct + '%';
+    const text = document.getElementById('water-liter-text');
+    if (text) text.textContent = `${currentLiters} de ${totalLiters} litros`;
   }
 
   function renderWaterCups() {
     const container = document.getElementById('water-tracker');
+    if (!container) return;
     container.innerHTML = '';
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < WATER_CUPS; i++) {
       const cup = document.createElement('div');
       cup.className = 'water-cup' + (i < STATE.waterCount ? ' filled' : '');
       cup.textContent = i < STATE.waterCount ? '💧' : '';
@@ -542,17 +925,14 @@
 
   function toggleWater(index) {
     if (index < STATE.waterCount) {
-      STATE.waterCount = index; // Remove up to this point
+      STATE.waterCount = index;
     } else {
-      STATE.waterCount = index + 1; // Fill up to this point
+      STATE.waterCount = index + 1;
     }
     STATE.waterDate = getDateKey();
     saveState();
-    renderWaterCups();
-    document.getElementById('water-counter').textContent = STATE.waterCount + ' / 8 copos';
+    renderWaterDisplay();
   }
-
-
 
   // ==================================================================
   // TASKS VIEW
@@ -567,14 +947,14 @@
   function renderDayTabs() {
     const container = document.getElementById('day-tabs');
     const today = getDayName();
-    container.innerHTML = DAYS_OF_WEEK.filter(d => d !== 'Domingo' || true).map(d => `
+    container.innerHTML = DAYS_OF_WEEK.map(d => `
       <button class="day-tab ${d === today ? 'active' : ''}" data-day="${d}"
-              onclick="switchDayTab('${d}')">${d}</button>
+              onclick="window.switchDayTab('${d}')">${d}</button>
     `).join('');
 
     window.switchDayTab = function(day) {
       document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
-      document.querySelector(`.day-tab[data-day="${day}"]`).classList.add('active');
+      document.querySelector(`.day-tab[data-day="${day}"]`)?.classList.add('active');
       STATE.currentDayTab = day;
       renderDayTasks(day);
     };
@@ -598,9 +978,10 @@
     }).join('');
 
     window.toggleTask = function(task) {
-      toggleItemDone('tasksDone', task);
+      toggleItemDone('tasksDone', task, STATE.currentDate);
       const day = STATE.currentDayTab || getDayName();
       renderDayTasks(day);
+      updateBadge();
     };
   }
 
@@ -619,18 +1000,42 @@
       renderDayTasks(day);
     }
 
-    btn.addEventListener('click', addTask);
-    input.addEventListener('keypress', e => { if (e.key === 'Enter') addTask(); });
+    if (btn) btn.addEventListener('click', addTask);
+    if (input) input.addEventListener('keypress', e => { if (e.key === 'Enter') addTask(); });
   }
 
   // ==================================================================
-  // SHOPPING
+  // SHOPPING (with categories)
   // ==================================================================
 
   function renderShopping() {
     renderShoppingAlerts();
+    renderShoppingCategories();
     renderShoppingList();
     setupShoppingInput();
+  }
+
+  function setupShoppingCategories() {
+    // Event delegation for category buttons
+    document.getElementById('shopping-categories')?.addEventListener('click', e => {
+      const btn = e.target.closest('.shop-cat-btn');
+      if (!btn) return;
+      document.querySelectorAll('.shop-cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      STATE.shoppingFilter = btn.dataset.cat;
+      saveState();
+      renderShoppingList();
+    });
+  }
+
+  function renderShoppingCategories() {
+    const container = document.getElementById('shopping-categories');
+    container.innerHTML = `
+      <button class="shop-cat-btn ${STATE.shoppingFilter === 'all' ? 'active' : ''}" data-cat="all">📋 Todas</button>
+      ${SHOPPING_CATEGORIES.map(cat => `
+        <button class="shop-cat-btn ${STATE.shoppingFilter === cat ? 'active' : ''}" data-cat="${cat}">${cat}</button>
+      `).join('')}
+    `;
   }
 
   function renderShoppingAlerts() {
@@ -659,15 +1064,34 @@
 
   function renderShoppingList() {
     const savedItems = STATE.shoppingItems || SHOPPING_ITEMS.map(i => ({ ...i, done: false }));
+    if (!STATE.shoppingItems) {
+      STATE.shoppingItems = SHOPPING_ITEMS.map(i => ({ ...i, done: false }));
+      saveState();
+    }
+
+    const filter = STATE.shoppingFilter || 'all';
+    const filtered = filter === 'all' ? savedItems : savedItems.filter(i => i.cat === filter);
+
+    // Sort by priority (1 = highest, 4 = lowest)
+    filtered.sort((a, b) => a.priority - b.priority);
+
     const container = document.getElementById('shopping-list');
 
-    container.innerHTML = savedItems.map(item => `
-      <div class="shop-item ${item.done ? 'done' : ''}" onclick="toggleShopping(${savedItems.indexOf(item)})">
-        <div class="shop-check">${item.done ? '✓' : ''}</div>
-        <span class="shop-text">${item.name}</span>
-        <span class="shop-category">${item.cat}</span>
-      </div>
-    `).join('');
+    if (filtered.length === 0) {
+      container.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:20px;">Nada aqui ✨</p>';
+      return;
+    }
+
+    container.innerHTML = filtered.map(item => {
+      const idx = savedItems.indexOf(item);
+      return `
+        <div class="shop-item ${item.done ? 'done' : ''}" onclick="toggleShopping(${idx})">
+          <div class="shop-check">${item.done ? '✓' : ''}</div>
+          <span class="shop-text">${item.name}</span>
+          <span class="shop-category">${item.cat}</span>
+        </div>
+      `;
+    }).join('');
 
     window.toggleShopping = function(idx) {
       savedItems[idx].done = !savedItems[idx].done;
@@ -675,11 +1099,6 @@
       saveState();
       renderShoppingList();
     };
-
-    if (!STATE.shoppingItems) {
-      STATE.shoppingItems = SHOPPING_ITEMS.map(i => ({ ...i, done: false }));
-      saveState();
-    }
   }
 
   function setupShoppingInput() {
@@ -690,14 +1109,14 @@
       const name = input.value.trim();
       if (!name) return;
       STATE.shoppingItems = STATE.shoppingItems || [];
-      STATE.shoppingItems.push({ name, cat: '📝 Novo', priority: 2, done: false });
+      STATE.shoppingItems.push({ name, cat: '🛒 Casa', priority: 2, done: false });
       saveState();
       input.value = '';
       renderShoppingList();
     }
 
-    btn.addEventListener('click', addItem);
-    input.addEventListener('keypress', e => { if (e.key === 'Enter') addItem(); });
+    if (btn) btn.addEventListener('click', addItem);
+    if (input) input.addEventListener('keypress', e => { if (e.key === 'Enter') addItem(); });
   }
 
   // ==================================================================
@@ -710,7 +1129,7 @@
     const editor = document.getElementById('note-editor');
 
     grid.innerHTML = notes.length > 0 ? notes.map((note, i) => `
-      <div class="note-card" onclick="editNote(${i})">
+      <div class="note-card" onclick="window.editNote(${i})">
         <p>${note.text.substring(0, 120)}${note.text.length > 120 ? '...' : ''}</p>
         <small>${new Date(note.date).toLocaleDateString('pt-BR')}</small>
       </div>
@@ -761,7 +1180,6 @@
     const startDate = new Date(STATE.startDate || '2026-08-01');
     const weekNum = Math.min(getWeekNumber(startDate), 22);
 
-    // Find current phase
     let currentPhase = CALISTENIA[0];
     for (const phase of CALISTENIA) {
       const [start, end] = phase.weeks.split('–').map(Number);
@@ -775,7 +1193,6 @@
     document.getElementById('phase-weeks').textContent = `Semanas ${currentPhase.weeks}`;
     document.getElementById('week-text').textContent = `Semana ${weekNum} / 22`;
 
-    // Week progress bar
     const bar = document.getElementById('week-bar');
     const fill = document.createElement('div');
     fill.className = 'week-bar-fill';
@@ -783,7 +1200,6 @@
     bar.innerHTML = '';
     bar.appendChild(fill);
 
-    // Exercises
     const container = document.getElementById('exercises-list');
     container.innerHTML = currentPhase.exercises.map(ex => `
       <div class="exercise-card">
@@ -799,11 +1215,13 @@
   function renderRunning() {
     const startDate = new Date(STATE.startDate || '2026-08-01');
     const weekNum = Math.min(getWeekNumber(startDate), 22);
+    // Ensure weekNum is at least 1
+    const safeWeek = Math.max(1, weekNum);
 
     let currentRun = RUNNING[0];
     for (const run of RUNNING) {
       const [start, end] = run.weeks.split('–').map(Number);
-      if (weekNum >= start && weekNum <= end) {
+      if (safeWeek >= start && safeWeek <= end) {
         currentRun = run;
         break;
       }
@@ -811,15 +1229,14 @@
 
     document.getElementById('run-week-label').textContent = `Semana ${currentRun.weeks}`;
 
-    // Week progress bar
     const bar = document.getElementById('run-week-bar');
     const fill = document.createElement('div');
     fill.className = 'week-bar-fill';
-    fill.style.width = (weekNum / 22 * 100) + '%';
+    fill.style.width = (safeWeek / 22 * 100) + '%';
     fill.style.background = '#16A34A';
     bar.innerHTML = '';
     bar.appendChild(fill);
-    document.getElementById('run-week-text').textContent = `Semana ${weekNum} / 22`;
+    document.getElementById('run-week-text').textContent = `Semana ${safeWeek} / 22`;
 
     const container = document.getElementById('run-detail');
     container.innerHTML = `
@@ -849,23 +1266,70 @@
     renderGoals();
     renderMeasurementsList();
     renderWorkoutCalendar();
-    // renderChart() is called from switchView with proper delay to ensure container has width
+    renderSleepChart();
+  }
+
+  function renderSleepChart() {
+    const container = document.getElementById('sleep-bars');
+    if (!container) return;
+
+    const log = STATE.dailyLog || {};
+    const today = new Date();
+    const bars = [];
+
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const key = getDateKey(d);
+      const dayData = log[key];
+      const hours = dayData ? dayData.sleep : null;
+      const dayName = DAYS_ABBR[d.getDay()];
+      bars.push({ key, hours, dayName, date: d.getDate() });
+    }
+
+    const maxSleep = 10;
+    container.innerHTML = bars.map(b => {
+      const pct = b.hours ? Math.min(100, (b.hours / maxSleep) * 100) : 10;
+      const color = b.hours
+        ? (b.hours >= 7 ? '#16A34A' : b.hours >= 6 ? '#F59E0B' : '#EF4444')
+        : '#E2E8F0';
+      return `
+        <div class="sleep-bar-wrap">
+          <span class="sleep-bar-val">${b.hours ? b.hours + 'h' : '--'}</span>
+          <div class="sleep-bar" style="height:${pct}%;background:${color};"></div>
+          <span class="sleep-bar-label">${b.dayName}</span>
+        </div>
+      `;
+    }).join('');
   }
 
   function renderGoals() {
+    const log = STATE.dailyLog || {};
+    const sortedKeys = Object.keys(log).sort().reverse();
+    let currentWeight = STATE.initialWeight || 97;
+    let currentBF = 27;
+
+    // Get latest weight from daily log
+    for (const key of sortedKeys) {
+      if (log[key].weight) {
+        currentWeight = log[key].weight;
+        break;
+      }
+    }
+
+    // Get latest BF from measurements
     const measurements = STATE.measurements || [];
-    const last = measurements.length > 0 ? measurements[measurements.length - 1] : null;
-    const currentWeight = last ? last.weight : STATE.initialWeight || 97;
-    const currentBF = last ? last.bf : 27;
+    if (measurements.length > 0) {
+      const last = measurements[measurements.length - 1];
+      if (last.bf) currentBF = last.bf;
+    }
 
     document.getElementById('current-weight').textContent = currentWeight + ' kg';
     document.getElementById('current-bf').textContent = currentBF + '%';
 
-    // Weight progress bar (from 97 to 83.5)
     const weightProgress = Math.min(100, Math.max(0, ((97 - currentWeight) / (97 - 83.5)) * 100));
     document.getElementById('weight-bar-fill').style.width = weightProgress + '%';
 
-    // BF progress bar (from 27 to 15)
     const bfProgress = Math.min(100, Math.max(0, ((27 - currentBF) / (27 - 15)) * 100));
     document.getElementById('bf-bar-fill').style.width = bfProgress + '%';
   }
@@ -915,10 +1379,8 @@
     const ctx = canvas.getContext('2d');
     const dpr = window.devicePixelRatio || 1;
 
-    // Set canvas size
     const rect = canvas.parentElement.getBoundingClientRect();
     if (rect.width === 0) {
-      // View is hidden, defer rendering
       setTimeout(() => renderChart(), 200);
       return;
     }
@@ -958,7 +1420,6 @@
     const chartW = w - padding.left - padding.right;
     const chartH = h - padding.top - padding.bottom;
 
-    // Draw grid lines
     ctx.strokeStyle = '#E2E8F0';
     ctx.lineWidth = 1;
     for (let i = 0; i < 4; i++) {
@@ -969,7 +1430,6 @@
       ctx.stroke();
     }
 
-    // Draw goal line (83.5kg)
     if (maxWeight !== minWeight) {
       const goalY = padding.top + chartH - ((83.5 - minWeight) / (maxWeight - minWeight)) * chartH;
       ctx.strokeStyle = '#16A34A';
@@ -986,7 +1446,6 @@
       ctx.fillText('Meta 83,5kg', padding.left, goalY - 4);
     }
 
-    // Draw weight line
     ctx.strokeStyle = '#2563EB';
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -999,7 +1458,6 @@
     });
     ctx.stroke();
 
-    // Draw dots
     validWeight.forEach((m, i) => {
       const x = padding.left + (i / (validWeight.length - 1)) * chartW;
       const y = padding.top + chartH - ((m.weight - minWeight) / (maxWeight - minWeight)) * chartH;
@@ -1011,14 +1469,12 @@
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Label
       ctx.fillStyle = '#64748B';
       ctx.font = '9px -apple-system, sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText(m.weight + 'kg', x, y - 10);
     });
 
-    // Y-axis labels
     ctx.fillStyle = '#94A3B8';
     ctx.font = '10px -apple-system, sans-serif';
     ctx.textAlign = 'right';
@@ -1079,7 +1535,6 @@
     document.getElementById('start-date').value = startDate;
     document.getElementById('initial-weight').value = STATE.initialWeight || 97;
 
-    // Plan summary
     const container = document.getElementById('plan-summary');
     container.innerHTML = PLAN_INFO.map(p => `
       <div class="plan-row">
@@ -1128,8 +1583,12 @@
         localStorage.removeItem('minhaVidaState');
         Object.assign(STATE, {
           scheduleDone: {}, tasksDone: {}, shoppingDone: {},
-          waterCount: 0, measurements: [], workoutLog: [], notes: [],
-          shoppingItems: null, startDate: '2026-08-01', initialWeight: 97
+          waterCount: 0, waterDate: null,
+          dailyLog: {},
+          measurements: [], workoutLog: {}, notes: [],
+          shoppingItems: null, shoppingFilter: 'all',
+          currentDate: getDateKey(),
+          startDate: '2026-08-01', initialWeight: 97
         });
         saveState();
         window.location.reload();
@@ -1138,53 +1597,154 @@
   }
 
   // ==================================================================
-  // NOTIFICATIONS
+  // NOTIFICATIONS & ALARMS
   // ==================================================================
 
   function setupNotifications() {
     document.getElementById('btn-notification').addEventListener('click', () => {
-      if ('Notification' in window) {
-        Notification.requestPermission().then(perm => {
-          if (perm === 'granted') {
-            showModal(
-              '🔔 Notificações ativadas!',
-              'Você receberá lembretes da sua rotina.'
-            );
-          }
-        });
-      }
+      requestNotificationPermission();
     });
 
     document.getElementById('btn-enable-notifications').addEventListener('click', () => {
-      if ('Notification' in window) {
-        Notification.requestPermission();
-      }
+      requestNotificationPermission();
     });
-
-    // Try to send notification when it's time for next activity
-    setInterval(checkNotification, 60000);
   }
 
-  function checkNotification() {
+  function requestNotificationPermission() {
+    if (!('Notification' in window)) {
+      showModal('🔔', 'Notificações não suportadas neste navegador.');
+      return;
+    }
+    Notification.requestPermission().then(perm => {
+      if (perm === 'granted') {
+        showModal('🔔 Notificações ativadas!', 'Você receberá alarmes nos horários da sua rotina.');
+        scheduleAlarms();
+      } else {
+        showModal('🔔', 'Permissão negada. Ative nas configurações do navegador.');
+      }
+    });
+  }
+
+  function scheduleAlarms() {
     if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    if (_alarmsScheduled) return;
+    _alarmsScheduled = true;
 
     const now = new Date();
-    const min = now.getHours() * 60 + now.getMinutes();
-    const schedule = getScheduleForDay();
+    const schedule = getScheduleForDay(now);
+    const todayKey = getDateKey();
+    const notifications = [];
 
-    for (const item of schedule) {
+    schedule.forEach(item => {
       const match = item.time.match(/(\d{1,2}):(\d{2})/);
-      if (!match) continue;
-      const itemMin = parseInt(match[1]) * 60 + parseInt(match[2]);
-      if (min === itemMin) {
-        new Notification('⏰ Minha Vida', {
-          body: item.emoji + ' ' + item.activity,
-          icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ctext y=".9em" font-size="90"%3E🧠%3C/text%3E%3C/svg%3E',
-          tag: 'routine-' + item.id,
-          requireInteraction: false
+      if (!match) return;
+
+      const hour = parseInt(match[1]);
+      const min = parseInt(match[2]);
+      const alarmTime = new Date(now);
+      alarmTime.setHours(hour, min, 0, 0);
+
+      // Only future alarms (within next 24h)
+      if (alarmTime <= now) return;
+      if (alarmTime.getTime() - now.getTime() > 24 * 60 * 60 * 1000) return;
+
+      // Don't schedule if already done today
+      if (isItemDone('scheduleDone', item.id, todayKey)) return;
+
+      notifications.push({
+        id: getNumericId(item.id),
+        title: item.emoji + ' ' + item.activity,
+        body: 'Hora de ' + item.activity.toLowerCase(),
+        time: alarmTime.getTime(),
+        action: 'schedule_done',
+        scheduleId: item.id
+      });
+    });
+
+    if (notifications.length === 0) return;
+
+    // === TRY 1: Capacitor native plugin (works when app is closed) ===
+    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
+      try {
+        Capacitor.Plugins.LocalNotifications.schedule({
+          notifications: notifications.map(n => ({
+            id: n.id,
+            title: n.title,
+            body: n.body,
+            schedule: { at: new Date(n.time) },
+            sound: 'default',
+            smallIcon: 'ic_stat_icon',
+            actionTypeId: '',
+            extra: null
+          }))
         });
-        break;
+        console.log('✅ Alarmes agendados via Capacitor nativo');
+        return;
+      } catch (e) {
+        console.warn('Capacitor native notifications failed, falling back to SW:', e);
       }
+    }
+
+    // === TRY 2: Service Worker (works when app is running/bg) ===
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({
+        type: 'SCHEDULE_NOTIFICATIONS',
+        notifications: notifications.map(n => ({
+          id: n.scheduleId,
+          title: n.title,
+          body: n.body,
+          time: n.time,
+          action: n.action
+        }))
+      });
+    }
+  }
+
+  function getNumericId(str) {
+    // Convert string IDs like 'exercise' to numeric hash for Capacitor
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = ((hash << 5) - hash) + str.charCodeAt(i);
+      hash |= 0; // Força inteiro 32-bit
+    }
+    return Math.abs(hash) % 100000;
+  }
+
+  // Listen for service worker messages (notification actions)
+  if (navigator.serviceWorker) {
+    navigator.serviceWorker.addEventListener('message', e => {
+      if (e.data && e.data.type === 'NOTIFICATION_ACTION') {
+        if (e.data.action === 'schedule_done' && e.data.id) {
+          toggleItemDone('scheduleDone', e.data.id, getDateKey());
+          renderSchedule();
+          updateProgressRing();
+        }
+      }
+    });
+  }
+
+  // ==================================================================
+  // BADGING API (show pending task count on icon)
+  // ==================================================================
+
+  function setupBadging() {
+    updateBadge();
+    // Update badge every minute
+    setInterval(updateBadge, 60000);
+  }
+
+  function updateBadge() {
+    if (!navigator.setAppBadge) return;
+
+    const today = new Date();
+    const schedule = getScheduleForDay(today);
+    const dateKey = getDateKey();
+    const pending = schedule.filter(item => !isItemDone('scheduleDone', item.id, dateKey));
+
+    if (pending.length > 0) {
+      navigator.setAppBadge(pending.length).catch(() => {});
+    } else {
+      navigator.clearAppBadge().catch(() => {});
     }
   }
 
@@ -1194,7 +1754,12 @@
 
   function registerSW() {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
+      navigator.serviceWorker.register('sw.js').catch(() => {});      // Re-schedule alarms when service worker is ready
+      navigator.serviceWorker.ready.then(() => {
+        if (Notification.permission === 'granted') {
+          setTimeout(scheduleAlarms, 2000);
+        }
+      }).catch(() => {});
     }
   }
 

@@ -28,7 +28,19 @@
 
   <!-- ===== VIEW: HOJE ===== -->
   <section id="view-hoje" class="view active">
-    <!-- Today's Progress Ring -->
+
+    <!-- Date Navigation -->
+    <div class="date-nav-bar">
+      <button class="date-nav-btn" id="btn-prev-day">◀</button>
+      <div class="date-nav-center" id="date-nav-display">
+        <span class="date-nav-dayname" id="nav-day-name">Hoje</span>
+        <span class="date-nav-date" id="nav-date">01/08</span>
+      </div>
+      <button class="date-nav-btn" id="btn-next-day">▶</button>
+      <button class="date-nav-today" id="btn-today">⏺</button>
+    </div>
+
+    <!-- Quick Stats + Progress Ring -->
     <div class="progress-ring-container">
       <div class="progress-ring">
         <svg viewBox="0 0 120 120">
@@ -53,35 +65,71 @@
         </div>
         <div class="stat-box">
           <span class="stat-value" id="stat-streak">0</span>
-          <span class="stat-label">dias</span>
+          <span class="stat-label">🔥 dias</span>
         </div>
       </div>
     </div>
 
     <!-- Today's Schedule -->
     <div class="section-header">
-      <h2>⏰ Rotina de Hoje</h2>
+      <h2>⏰ Rotina</h2>
       <span class="day-label" id="day-label"></span>
     </div>
     <div class="schedule-list" id="schedule-list"></div>
 
     <!-- Today's Meals -->
     <div class="section-header">
-      <h2>🍽️ Refeições de Hoje</h2>
+      <h2>🍽️ Refeições</h2>
     </div>
     <div class="meals-grid" id="meals-today"></div>
 
     <!-- Water Intake -->
     <div class="section-header">
       <h2>💧 Água</h2>
-      <span id="water-counter">0 / 8 copos</span>
+      <span id="water-counter">0 / 2.0 L</span>
     </div>
     <div class="water-tracker" id="water-tracker"></div>
+    <div class="water-liter-bar" id="water-liter-bar">
+      <div class="water-liter-fill" id="water-liter-fill"></div>
+    </div>
+    <span class="water-liter-text" id="water-liter-text">0 de 2.0 litros</span>
+
+    <!-- Daily Log: Peso + Sono -->
+    <div class="section-header">
+      <h2>📊 Registro do Dia</h2>
+    </div>
+    <div class="daily-log" id="daily-log">
+      <div class="daily-log-row">
+        <div class="daily-log-item">
+          <label>⚖️ Peso (kg)</label>
+          <input type="number" id="input-daily-weight" step="0.1" placeholder="83.5" class="daily-input">
+          <button class="btn-small-save" id="btn-save-weight">💾</button>
+        </div>
+        <div class="daily-log-item">
+          <label>😴 Sono (horas)</label>
+          <input type="number" id="input-daily-sleep" step="0.5" min="0" max="24" placeholder="7.5" class="daily-input">
+          <button class="btn-small-save" id="btn-save-sleep">💾</button>
+        </div>
+      </div>
+      <div class="daily-log-display" id="daily-log-display"></div>
+
+      <!-- Daily Note -->
+      <div class="daily-note-section">
+        <div class="daily-note-row">
+          <textarea class="daily-note-input" id="daily-note-input" rows="2" placeholder="📝 Anotação do dia..." maxlength="500"></textarea>
+          <button class="btn-small-save" id="btn-save-note-day">💾</button>
+        </div>
+        <div class="daily-note-display" id="daily-note-display"></div>
+      </div>
+
+      <!-- Complete Day Button -->
+      <button class="btn-complete-day" id="btn-complete-day">✅ Marcar dia como concluído</button>
+    </div>
+
   </section>
 
   <!-- ===== VIEW: TAREFAS ===== -->
   <section id="view-tarefas" class="view">
-    <!-- Sub-navigation -->
     <div class="sub-nav">
       <button class="sub-nav-btn active" data-sub="diarias">📋 Diárias</button>
       <button class="sub-nav-btn" data-sub="compras">🛒 Compras</button>
@@ -107,6 +155,7 @@
         <h2>🛒 Lista de Compras</h2>
       </div>
       <div class="shopping-alerts" id="shopping-alerts"></div>
+      <div class="shopping-categories" id="shopping-categories"></div>
       <div class="shopping-list" id="shopping-list"></div>
       <div class="add-task-bar">
         <input type="text" id="shopping-input" placeholder="Adicionar item..." maxlength="100">
@@ -139,7 +188,6 @@
       <button class="sub-nav-btn" data-sub="agenda">📅 Agenda</button>
     </div>
 
-    <!-- Sub: Calistenia -->
     <div class="sub-view active" id="sub-calistenia">
       <div class="phase-banner" id="phase-banner">
         <span class="phase-label" id="phase-label">Fase 1 — Base</span>
@@ -152,7 +200,6 @@
       <div class="exercises-list" id="exercises-list"></div>
     </div>
 
-    <!-- Sub: Corrida -->
     <div class="sub-view" id="sub-corrida">
       <div class="phase-banner" style="background:#16A34A;">
         <span class="phase-label" id="run-phase-label">Progressão de Corrida</span>
@@ -165,7 +212,6 @@
       <div class="run-detail" id="run-detail"></div>
     </div>
 
-    <!-- Sub: Agenda -->
     <div class="sub-view" id="sub-agenda">
       <div class="section-header">
         <h2>📅 Agenda Semanal</h2>
@@ -224,15 +270,22 @@
       </div>
     </div>
 
+    <!-- Sleep History Chart -->
+    <div class="sleep-chart-section">
+      <div class="section-header">
+        <h2>😴 Sono (últimos 7 dias)</h2>
+      </div>
+      <div class="sleep-bars" id="sleep-bars"></div>
+    </div>
+
     <div class="chart-container">
       <canvas id="progress-chart"></canvas>
     </div>
 
     <div class="measurements-list" id="measurements-list"></div>
 
-    <!-- Workout Calendar -->
     <div class="section-header" style="margin-top:20px;">
-      <h2>🗓️ Treinos do Mês</h2>
+      <h2>🗓️ Treinos da Semana</h2>
     </div>
     <div class="workout-calendar" id="workout-calendar"></div>
   </section>
@@ -251,7 +304,7 @@
       </div>
       <div class="setting-item">
         <label>Notificações</label>
-        <button class="btn-secondary" id="btn-enable-notifications">🔔 Ativar lembretes</button>
+        <button class="btn-secondary" id="btn-enable-notifications">🔔 Ativar alarmes</button>
       </div>
     </div>
 
@@ -267,7 +320,7 @@
     </div>
 
     <div class="app-footer-text">
-      <p>Minha Vida Organizada v1.0</p>
+      <p>Minha Vida Organizada v2.0</p>
       <p>Feito para Jhona 🧠</p>
     </div>
   </section>

@@ -55,7 +55,7 @@ jobs:
         run: |
           cd app
           npm init -y
-          npm install @capacitor/core @capacitor/cli @capacitor/android
+          npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/local-notifications
 
       - name: 🏗️ Preparar arquivos do app
         run: |
@@ -69,6 +69,7 @@ jobs:
           cd app
           npx cap init "Minha Vida Organizada" "com.jhona.organizacao" --web-dir www
           npx cap add android
+          npx cap sync android
 
       - name: 🔧 Corrigir conflito de versões do Kotlin
         run: |
