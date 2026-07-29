@@ -70,6 +70,32 @@ jobs:
           npx cap init "Minha Vida Organizada" "com.jhona.organizacao" --web-dir www
           npx cap add android
 
+      - name: 🔧 Corrigir conflito de versões do Kotlin
+        run: |
+          cd app/android
+          # 1) Forçar versão única do Kotlin no projeto
+          sed -i 's/kotlin_version = .*/kotlin_version = "1.8.22"/' build.gradle
+          
+          # 2) Excluir módulos legados jdk7/jdk8 via Node.js (multiline seguro)
+          node -e "
+          const fs = require('fs');
+          let c = fs.readFileSync('app/build.gradle', 'utf8');
+          const b = 'configurations.all {\n' +
+            '    exclude group: \"org.jetbrains.kotlin\", module: \"kotlin-stdlib-jdk7\"\n' +
+            '    exclude group: \"org.jetbrains.kotlin\", module: \"kotlin-stdlib-jdk8\"\n' +
+            '}\n\n';
+          c = c.replace(/^android \{/m, b + 'android {');
+          fs.writeFileSync('app/build.gradle', c);
+          "
+          echo "✅ Conflito de dependências do Kotlin resolvido"
+
+      - name: 🧹 Limpar cache do Gradle
+        run: |
+          cd app/android
+          chmod +x gradlew
+          export ANDROID_HOME=$ANDROID_SDK_ROOT
+          ./gradlew clean --no-daemon -Dorg.gradle.jvmargs=-Xmx2g || true
+
       - name: 🔨 Compilar APK
         run: |
           cd app/android
