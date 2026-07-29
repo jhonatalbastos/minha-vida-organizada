@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#2563EB">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<title>Minha Vida Organizada</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ====== HEADER ====== -->
+<header id="app-header">
+  <div class="header-left">
+    <span class="header-greeting" id="greeting">Bom dia 👋</span>
+    <span class="header-date" id="header-date"></span>
+  </div>
+  <div class="header-right">
+    <button class="header-btn" id="btn-notification" title="Ativar notificações">🔔</button>
+  </div>
+</header>
+
+<!-- ====== MAIN CONTENT ====== -->
+<main id="app-content">
+
+  <!-- ===== VIEW: HOJE ===== -->
+  <section id="view-hoje" class="view active">
+    <!-- Today's Progress Ring -->
+    <div class="progress-ring-container">
+      <div class="progress-ring">
+        <svg viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="54" fill="none" stroke="#E2E8F0" stroke-width="8"/>
+          <circle id="progress-circle" cx="60" cy="60" r="54" fill="none" stroke="#2563EB" stroke-width="8"
+            stroke-linecap="round" stroke-dasharray="339.292" stroke-dashoffset="339.292"
+            transform="rotate(-90, 60, 60)"/>
+        </svg>
+        <div class="progress-ring-text">
+          <span id="progress-percent">0%</span>
+          <small>do dia</small>
+        </div>
+      </div>
+      <div class="quick-stats">
+        <div class="stat-box">
+          <span class="stat-value" id="stat-weight">--</span>
+          <span class="stat-label">kg</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-value" id="stat-bf">--</span>
+          <span class="stat-label">%BF</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-value" id="stat-streak">0</span>
+          <span class="stat-label">dias</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Today's Schedule -->
+    <div class="section-header">
+      <h2>⏰ Rotina de Hoje</h2>
+      <span class="day-label" id="day-label"></span>
+    </div>
+    <div class="schedule-list" id="schedule-list"></div>
+
+    <!-- Today's Meals -->
+    <div class="section-header">
+      <h2>🍽️ Refeições de Hoje</h2>
+    </div>
+    <div class="meals-grid" id="meals-today"></div>
+
+    <!-- Water Intake -->
+    <div class="section-header">
+      <h2>💧 Água</h2>
+      <span id="water-counter">0 / 8 copos</span>
+    </div>
+    <div class="water-tracker" id="water-tracker"></div>
+  </section>
+
+  <!-- ===== VIEW: TAREFAS ===== -->
+  <section id="view-tarefas" class="view">
+    <!-- Sub-navigation -->
+    <div class="sub-nav">
+      <button class="sub-nav-btn active" data-sub="diarias">📋 Diárias</button>
+      <button class="sub-nav-btn" data-sub="compras">🛒 Compras</button>
+      <button class="sub-nav-btn" data-sub="notas">📝 Notas</button>
+    </div>
+
+    <!-- Sub: Daily Tasks -->
+    <div class="sub-view active" id="sub-diarias">
+      <div class="section-header">
+        <h2>Tarefas da Semana</h2>
+      </div>
+      <div class="day-tabs" id="day-tabs"></div>
+      <div class="task-list" id="task-list"></div>
+      <div class="add-task-bar">
+        <input type="text" id="task-input" placeholder="Nova tarefa..." maxlength="100">
+        <button class="btn-add" id="btn-add-task">+</button>
+      </div>
+    </div>
+
+    <!-- Sub: Shopping -->
+    <div class="sub-view" id="sub-compras">
+      <div class="section-header">
+        <h2>🛒 Lista de Compras</h2>
+      </div>
+      <div class="shopping-alerts" id="shopping-alerts"></div>
+      <div class="shopping-list" id="shopping-list"></div>
+      <div class="add-task-bar">
+        <input type="text" id="shopping-input" placeholder="Adicionar item..." maxlength="100">
+        <button class="btn-add" id="btn-add-shopping">+</button>
+      </div>
+    </div>
+
+    <!-- Sub: Notes -->
+    <div class="sub-view" id="sub-notas">
+      <div class="section-header">
+        <h2>📝 Minhas Notas</h2>
+      </div>
+      <div class="notes-grid" id="notes-grid"></div>
+      <div class="note-editor" id="note-editor" style="display:none;">
+        <textarea id="note-textarea" rows="5" placeholder="Escreva sua nota..."></textarea>
+        <div class="note-actions">
+          <button class="btn-secondary" id="btn-cancel-note">Cancelar</button>
+          <button class="btn-primary" id="btn-save-note">Salvar</button>
+        </div>
+      </div>
+      <button class="btn-primary btn-block" id="btn-new-note">+ Nova Nota</button>
+    </div>
+  </section>
+
+  <!-- ===== VIEW: TREINOS ===== -->
+  <section id="view-treinos" class="view">
+    <div class="sub-nav">
+      <button class="sub-nav-btn active" data-sub="calistenia">🏋️ Calistenia</button>
+      <button class="sub-nav-btn" data-sub="corrida">🏃 Corrida</button>
+      <button class="sub-nav-btn" data-sub="agenda">📅 Agenda</button>
+    </div>
+
+    <!-- Sub: Calistenia -->
+    <div class="sub-view active" id="sub-calistenia">
+      <div class="phase-banner" id="phase-banner">
+        <span class="phase-label" id="phase-label">Fase 1 — Base</span>
+        <span class="phase-weeks" id="phase-weeks">Semanas 1-4</span>
+      </div>
+      <div class="week-progress">
+        <div class="week-bar" id="week-bar"></div>
+        <span id="week-text">Semana 0 / 22</span>
+      </div>
+      <div class="exercises-list" id="exercises-list"></div>
+    </div>
+
+    <!-- Sub: Corrida -->
+    <div class="sub-view" id="sub-corrida">
+      <div class="phase-banner" style="background:#16A34A;">
+        <span class="phase-label" id="run-phase-label">Progressão de Corrida</span>
+        <span class="phase-weeks" id="run-week-label">Semana 1-2</span>
+      </div>
+      <div class="week-progress">
+        <div class="week-bar" id="run-week-bar"></div>
+        <span id="run-week-text">Semana 0 / 22</span>
+      </div>
+      <div class="run-detail" id="run-detail"></div>
+    </div>
+
+    <!-- Sub: Agenda -->
+    <div class="sub-view" id="sub-agenda">
+      <div class="section-header">
+        <h2>📅 Agenda Semanal</h2>
+      </div>
+      <div class="weekly-agenda" id="weekly-agenda"></div>
+    </div>
+  </section>
+
+  <!-- ===== VIEW: PROGRESSO ===== -->
+  <section id="view-progresso" class="view">
+    <div class="goals-overview">
+      <div class="goal-card" id="goal-weight">
+        <div class="goal-icon">⚖️</div>
+        <div class="goal-info">
+          <span class="goal-label">Peso</span>
+          <span class="goal-current" id="current-weight">-- kg</span>
+          <span class="goal-target">Meta: 83,5 kg</span>
+        </div>
+        <div class="goal-progress">
+          <div class="goal-bar">
+            <div class="goal-bar-fill" id="weight-bar-fill"></div>
+          </div>
+        </div>
+      </div>
+      <div class="goal-card" id="goal-bf">
+        <div class="goal-icon">🎯</div>
+        <div class="goal-info">
+          <span class="goal-label">Gordura</span>
+          <span class="goal-current" id="current-bf">--%</span>
+          <span class="goal-target">Meta: 15%</span>
+        </div>
+        <div class="goal-progress">
+          <div class="goal-bar">
+            <div class="goal-bar-fill" id="bf-bar-fill"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h2>📊 Histórico</h2>
+      <button class="btn-small" id="btn-add-measurement">+ Novo</button>
+    </div>
+
+    <div class="measurement-form" id="measurement-form" style="display:none;">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Peso (kg)</label>
+          <input type="number" id="input-weight" step="0.1" placeholder="83.5">
+        </div>
+        <div class="form-group">
+          <label>Gordura (%)</label>
+          <input type="number" id="input-bf" step="0.1" placeholder="15">
+        </div>
+        <button class="btn-primary" id="btn-save-measurement">Salvar</button>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="progress-chart"></canvas>
+    </div>
+
+    <div class="measurements-list" id="measurements-list"></div>
+
+    <!-- Workout Calendar -->
+    <div class="section-header" style="margin-top:20px;">
+      <h2>🗓️ Treinos do Mês</h2>
+    </div>
+    <div class="workout-calendar" id="workout-calendar"></div>
+  </section>
+
+  <!-- ===== VIEW: MAIS ===== -->
+  <section id="view-mais" class="view">
+    <div class="settings-section">
+      <h3>⚙️ Configurações</h3>
+      <div class="setting-item">
+        <label>Data de início do plano</label>
+        <input type="date" id="start-date">
+      </div>
+      <div class="setting-item">
+        <label>Peso inicial (kg)</label>
+        <input type="number" id="initial-weight" step="0.1" value="97">
+      </div>
+      <div class="setting-item">
+        <label>Notificações</label>
+        <button class="btn-secondary" id="btn-enable-notifications">🔔 Ativar lembretes</button>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <h3>📋 Resumo do Plano</h3>
+      <div class="plan-summary" id="plan-summary"></div>
+    </div>
+
+    <div class="settings-section">
+      <h3>🗄️ Dados</h3>
+      <button class="btn-secondary btn-block" id="btn-export-data">📤 Exportar dados</button>
+      <button class="btn-danger btn-block" id="btn-reset-data">🗑️ Resetar todos os dados</button>
+    </div>
+
+    <div class="app-footer-text">
+      <p>Minha Vida Organizada v1.0</p>
+      <p>Feito para Jhona 🧠</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ====== BOTTOM NAVIGATION ====== -->
+<nav id="bottom-nav">
+  <button class="nav-btn active" data-view="hoje">
+    <span class="nav-icon">🏠</span>
+    <span class="nav-label">Hoje</span>
+  </button>
+  <button class="nav-btn" data-view="tarefas">
+    <span class="nav-icon">📋</span>
+    <span class="nav-label">Tarefas</span>
+  </button>
+  <button class="nav-btn" data-view="treinos">
+    <span class="nav-icon">🏋️</span>
+    <span class="nav-label">Treinos</span>
+  </button>
+  <button class="nav-btn" data-view="progresso">
+    <span class="nav-icon">📊</span>
+    <span class="nav-label">Progresso</span>
+  </button>
+  <button class="nav-btn" data-view="mais">
+    <span class="nav-icon">⚙️</span>
+    <span class="nav-label">Mais</span>
+  </button>
+</nav>
+
+<script src="js/app.js"></script>
+</body>
+</html>

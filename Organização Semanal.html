@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planner Semanal</title>
+<style>
+  @page { size: A4; margin: 12mm; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; color: #1a1a1a; background: #fff; }
+  .page { width: 210mm; min-height: 297mm; padding: 12mm; page-break-after: always; position: relative; }
+  .page:last-child { page-break-after: avoid; }
+  .page-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 18px; border-bottom: 2.5px solid #2563EB; padding-bottom: 8px; }
+  .day-title { font-size: 22px; font-weight: 700; color: #2563EB; text-transform: uppercase; letter-spacing: 0.5px; }
+  .day-date { font-size: 13px; color: #888; }
+  .date-input { width: 120px; border: none; border-bottom: 1px solid #ccc; font-size: 13px; color: #888; font-family: inherit; padding: 2px 4px; }
+  .schedule { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+  .schedule td { padding: 5px 8px; vertical-align: top; font-size: 12.5px; line-height: 1.45; }
+  .schedule .time { width: 100px; color: #2563EB; font-weight: 600; white-space: nowrap; font-size: 12px; }
+  .schedule .activity { color: #333; }
+  .section-label { font-size: 13px; font-weight: 700; color: #2563EB; margin: 12px 0 6px 0; text-transform: uppercase; letter-spacing: 0.4px; }
+  .tasks { margin-bottom: 12px; }
+  .task-item { display: flex; align-items: center; gap: 8px; padding: 3px 0; font-size: 12.5px; color: #333; }
+  .checkbox { width: 14px; height: 14px; border: 1.5px solid #999; border-radius: 3px; flex-shrink: 0; }
+  .meal-row { display: flex; gap: 6px; font-size: 12px; margin-bottom: 3px; }
+  .meal-tag { background: #f0f7ff; color: #2563EB; padding: 2px 8px; border-radius: 4px; font-weight: 600; white-space: nowrap; }
+  .meal-desc { color: #444; padding: 2px 0; }
+  .notes-label { font-size: 13px; font-weight: 700; color: #16A34A; margin: 10px 0 6px 0; text-transform: uppercase; letter-spacing: 0.4px; }
+  .notes-lines { width: 100%; }
+  .notes-lines div { border-bottom: 1px dashed #d0d0d0; height: 26px; }
+  .footer { position: absolute; bottom: 12mm; left: 12mm; right: 12mm; display: flex; justify-content: space-between; font-size: 10px; color: #bbb; }
+  @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+</style>
+</head>
+<body>
+
+<!-- SEGUNDA -->
+<div class="page">
+  <div class="page-header">
+    <span class="day-title">Segunda-feira</span>
+    <input class="date-input" type="text" placeholder="dd/mm/aaaa">
+  </div>
+  <table class="schedule">
+    <tr><td class="time">05:00</td><td class="activity">Acordar + água</td></tr>
+    <tr><td class="time">05:05 – 05:35</td><td class="activity">Exercício (30 min)</td></tr>
+    <tr><td class="time">05:35 – 05:45</td><td class="activity">Mindfulness (5–15 min)</td></tr>
+    <tr><td class="time">05:45 – 06:10</td><td class="activity">Banho + higiene + protetor solar + pomada capilar</td></tr>
+    <tr><td class="time">06:10 – 06:15</td><td class="activity">Overnight Oats</td></tr>
+    <tr><td class="time">06:15 – 07:00</td><td class="activity">Trajeto moto</td></tr>
+    <tr><td class="time">07:00 – 17:00</td><td class="activity">Trabalho</td></tr>
+    <tr><td class="time">17:00 – 17:45</td><td class="activity">Trajeto volta</td></tr>
+    <tr><td class="time">17:45 – 18:15</td><td class="activity">Check-in casa (louça rápida 15 min)</td></tr>
+    <tr><td class="time">18:15 +</td><td class="activity">Jantar + tempo livre</td></tr>
+    <tr><td class="time">21:30</td><td class="activity">Leitura (20 min)</td></tr>
+    <tr><td class="time">22:00</td><td class="activity">Dormir</td></tr>
+  </table>
+
+  <div class="section-label">Tarefas do dia</div>
+  <div class="tasks">
+    <div class="task-item"><span class="checkbox"></span> Lixo</div>
+    <div class="task-item"><span class="checkbox"></span> Limpar bancada</div>
+  </div>
+
+  <div class="section-label">Refeições</div>
+  <div class="meal-row"><span class="meal-tag">Café</span><span class="meal-desc">Overnight Oats</span></div>
+  <div class="meal-row"><span class="meal-tag">Almoço</span><span class="meal-desc">Marmita</span></div>
+  <div class="meal-row"><span class="meal-tag">Lanche</span><span class="meal-desc">Whey + fruta + castanha</span></div>
+  <div class="meal-row"><span class="meal-tag">Jantar</span><span class="meal-desc">Hambúrguer fit Airfryer</span></div>
+
+  <div class="notes-label">Anotações</div>
+  <div class="notes-lines"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+
+  <div class="footer"><span>Planner Semanal</span><span>Página 1 de 7</span></div>
+</div>
+
+<!-- TERÇA -->
+<div class="page">
+  <div class="page-header">
+    <span class="day-title">Terça-feira</span>
+    <input class="date-input" type="text" placeholder="dd/mm/aaaa">
+  </div>
+  <table class="schedule">
+    <tr><td class="time">05:00</td><td class="activity">Acordar + água</td></tr>
+    <tr><td class="time">05:05 – 05:35</td><td class="activity">Exercício (30 min)</td></tr>
+    <tr><td class="time">05:35 – 05:45</td><td class="activity">Mindfulness (5–15 min)</td></tr>
+    <tr><td class="time">05:45 – 06:10</td><td class="activity">Banho + higiene + protetor solar + pomada capilar</td></tr>
+    <tr><td class="time">06:10 – 06:15</td><td class="activity">Overnight Oats</td></tr>
+    <tr><td class="time">06:15 – 07:00</td><td class="activity">Trajeto moto</td></tr>
+    <tr><td class="time">07:00 – 17:00</td><td class="activity">Trabalho</td></tr>
+    <tr><td class="time">17:00 – 17:45</td><td class="activity">Trajeto volta</td></tr>
+    <tr><td class="time">17:45 – 18:15</td><td class="activity">Check-in casa (louça rápida 15 min)</td></tr>
+    <tr><td class="time">18:15 +</td><td class="activity">Jantar + tempo livre</td></tr>
+    <tr><td class="time">21:30</td><td class="activity">Leitura (20 min)</td></tr>
+    <tr><td class="time">22:00</td><td class="activity">Dormir</td></tr>
+  </table>
+
+  <div class="section-label">Tarefas do dia</div>
+  <div class="tasks">
+    <div class="task-item"><span class="checkbox"></span> Tirar pó</div>
+  </div>
+
+  <div class="section-label">Refeições</div>
+  <div class="meal-row"><span class="meal-tag">Café</span><span class="meal-desc">Overnight Oats</span></div>
+  <div class="meal-row"><span class="meal-tag">Almoço</span><span class="meal-desc">Marmita</span></div>
+  <div class="meal-row"><span class="meal-tag">Lanche</span><span class="meal-desc">Whey + fruta + castanha</span></div>
+  <div class="meal-row"><span class="meal-tag">Jantar</span><span class="meal-desc">Hambúrguer fit Airfryer</span></div>
+
+  <div class="notes-label">Anotações</div>
+  <div class="notes-lines"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+
+  <div class="footer"><span>Planner Semanal</span><span>Página 2 de 7</span></div>
+</div>
+
+<!-- QUARTA -->
+<div class="page">
+  <div class="page-header">
+    <span class="day-title">Quarta-feira</span>
+    <input class="date-input" type="text" placeholder="dd/mm/aaaa">
+  </div>
+  <table class="schedule">
+    <tr><td class="time">05:00</td><td class="activity">Acordar + água</td></tr>
+    <tr><td class="time">05:05 – 05:35</td><td class="activity">Exercício (30 min)</td></tr>
+    <tr><td class="time">05:35 – 05:45</td><td class="activity">Mindfulness (5–15 min)</td></tr>
+    <tr><td class="time">05:45 – 06:10</td><td class="activity">Banho + higiene + protetor solar + pomada capilar</td></tr>
+    <tr><td class="time">06:10 – 06:15</td><td class="activity">Overnight Oats</td></tr>
+    <tr><td class="time">06:15 – 07:00</td><td class="activity">Trajeto moto</td></tr>
+    <tr><td class="time">07:00 – 17:00</td><td class="activity">Trabalho</td></tr>
+    <tr><td class="time">17:00 – 17:45</td><td class="activity">Trajeto volta</td></tr>
+    <tr><td class="time">17:45 – 18:15</td><td class="activity">Check-in casa (louça rápida 15 min)</td></tr>
+    <tr><td class="time">18:15 +</td><td class="activity">Jantar + tempo livre</td></tr>
+    <tr><td class="time">21:30</td><td class="activity">Leitura (20 min)</td></tr>
+    <tr><td class="time">22:00</td><td class="activity">Dormir</td></tr>
+  </table>
+
+  <div class="section-label">Tarefas do dia</div>
+  <div class="tasks">
+    <div class="task-item"><span class="checkbox"></span> Banheiro rápido</div>
+  </div>
+
+  <div class="section-label">Refeições</div>
+  <div class="meal-row"><span class="meal-tag">Café</span><span class="meal-desc">Overnight Oats</span></div>
+  <div class="meal-row"><span class="meal-tag">Almoço</span><span class="meal-desc">Marmita</span></div>
+  <div class="meal-row"><span class="meal-tag">Lanche</span><span class="meal-desc">Whey + fruta + castanha</span></div>
+  <div class="meal-row"><span class="meal-tag">Jantar</span><span class="meal-desc">Hambúrguer fit Airfryer</span></div>
+
+  <div class="notes-label">Anotações</div>
+  <div class="notes-lines"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+
+  <div class="footer"><span>Planner Semanal</span><span>Página 3 de 7</span></div>
+</div>
+
+<!-- QUINTA -->
+<div class="page">
+  <div class="page-header">
+    <span class="day-title">Quinta-feira</span>
+    <input class="date-input" type="text" placeholder="dd/mm/aaaa">
+  </div>
+  <table class="schedule">
+    <tr><td class="time">05:00</td><td class="activity">Acordar + água</td></tr>
+    <tr><td class="time">05:05 – 05:35</td><td class="activity">Exercício (30 min)</td></tr>
+    <tr><td class="time">05:35 – 05:45</td><td class="activity">Mindfulness (5–15 min)</td></tr>
+    <tr><td class="time">05:45 – 06:10</td><td class="activity">Banho + higiene + protetor solar + pomada capilar</td></tr>
+    <tr><td class="time">06:10 – 06:15</td><td class="activity">Overnight Oats</td></tr>
+    <tr><td class="time">06:15 – 07:00</td><td class="activity">Trajeto moto</td></tr>
+    <tr><td class="time">07:00 – 17:00</td><td class="activity">Trabalho</td></tr>
+    <tr><td class="time">17:00 – 17:45</td><td class="activity">Trajeto volta</td></tr>
+    <tr><td class="time">17:45 – 18:15</td><td class="activity">Check-in casa (louça rápida 15 min)</td></tr>
+    <tr><td class="time">18:15 +</td><td class="activity">Jantar + tempo livre</td></tr>
+    <tr><td class="time">21:30</td><td class="activity">Leitura (20 min)</td></tr>
+    <tr><td class="time">22:00</td><td class="activity">Dormir</td></tr>
+  </table>
+
+  <div class="section-label">Tarefas do dia</div>
+  <div class="tasks">
+    <div class="task-item"><span class="checkbox"></span> Organizar fora do lugar</div>
+  </div>
+
+  <div class="section-label">Refeições</div>
+  <div class="meal-row"><span class="meal-tag">Café</span><span class="meal-desc">Overnight Oats</span></div>
+  <div class="meal-row"><span class="meal-tag">Almoço</span><span class="meal-desc">Marmita</span></div>
+  <div class="meal-row"><span class="meal-tag">Lanche</span><span class="meal-desc">Whey + fruta + castanha</span></div>
+  <div class="meal-row"><span class="meal-tag">Jantar</span><span class="meal-desc">Hambúrguer fit Airfryer</span></div>
+
+  <div class="notes-label">Anotações</div>
+  <div class="notes-lines"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+
+  <div class="footer"><span>Planner Semanal</span><span>Página 4 de 7</span></div>
+</div>
+
+<!-- SEXTA -->
+<div class="page">
+  <div class="page-header">
+    <span class="day-title">Sexta-feira</span>
+    <input class="date-input" type="text" placeholder="dd/mm/aaaa">
+  </div>
+  <table class="schedule">
+    <tr><td class="time">05:00</td><td class="activity">Acordar + água</td></tr>
+    <tr><td class="time">05:05 – 05:35</td><td class="activity">Exercício (30 min)</td></tr>
+    <tr><td class="time">05:35 – 05:45</td><td class="activity">Mindfulness (5–15 min)</td></tr>
+    <tr><td class="time">05:45 – 06:10</td><td class="activity">Banho + higiene + protetor solar + pomada capilar</td></tr>
+    <tr><td class="time">06:10 – 06:15</td><td class="activity">Overnight Oats</td></tr>
+    <tr><td class="time">06:15 – 07:00</td><td class="activity">Trajeto moto</td></tr>
+    <tr><td class="time">07:00 – 13:00</td><td class="activity">Trabalho (saída 13h)</td></tr>
+    <tr><td class="time">13:00 – 14:30</td><td class="activity">Trajeto / intervalo</td></tr>
+    <tr><td class="time">14:30 – 16:00</td><td class="activity">Mercado</td></tr>
+    <tr><td class="time">16:00 +</td><td class="activity">Massagem desportiva (quinzenal) / tempo livre</td></tr>
+    <tr><td class="time">21:30</td><td class="activity">Leitura (20 min)</td></tr>
+    <tr><td class="time">22:00</td><td class="activity">Dormir</td></tr>
+  </table>
+
+  <div class="section-label">Tarefas do dia</div>
+  <div class="tasks">
+    <div class="task-item"><span class="checkbox"></span> Mercado (14:30 – 16:00)</div>
+    <div class="task-item"><span class="checkbox"></span> Massagem desportiva (quinzenal)</div>
+  </div>
+
+  <div class="section-label">Refeições</div>
+  <div class="meal-row"><span class="meal-tag">Café</span><span class="meal-desc">Overnight Oats</span></div>
+  <div class="meal-row"><span class="meal-tag">Almoço</span><span class="meal-desc">Marmita</span></div>
+  <div class="meal-row"><span class="meal-tag">Lanche</span><span class="meal-desc">Whey + fruta + castanha</span></div>
+  <div class="meal-row"><span class="meal-tag">Jantar</span><span class="meal-desc">Hambúrguer fit Airfryer</span></div>
+
+  <div class="notes-label">Anotações</div>
+  <div class="notes-lines"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+
+  <div class="footer"><span>Planner Semanal</span><span>Página 5 de 7</span></div>
+</div>
+
+<!-- SÁBADO -->
+<div class="page">
+  <div class="page-header">
+    <span class="day-title">Sábado</span>
+    <input class="date-input" type="text" placeholder="dd/mm/aaaa">
+  </div>
+  <table class="schedule">
+    <tr><td class="time">08:30 – 11:30</td><td class="activity">Meal prep semanal</td></tr>
+    <tr><td class="time">11:30 – 12:30</td><td class="activity">Limpeza da casa (1 h)</td></tr>
+    <tr><td class="time">12:30 +</td><td class="activity">Tarde / noite livre</td></tr>
+  </table>
+
+  <div class="section-label">Tarefas do dia</div>
+  <div class="tasks">
+    <div class="task-item"><span class="checkbox"></span> Meal prep (08:30 – 11:30)</div>
+    <div class="task-item"><span class="checkbox"></span> Limpeza 1 h</div>
+  </div>
+
+  <div class="section-label">Refeições</div>
+  <div class="meal-row"><span class="meal-tag">Café</span><span class="meal-desc">Overnight Oats</span></div>
+  <div class="meal-row"><span class="meal-tag">Almoço</span><span class="meal-desc">Marmita</span></div>
+  <div class="meal-row"><span class="meal-tag">Lanche</span><span class="meal-desc">Whey + fruta + castanha</span></div>
+  <div class="meal-row"><span class="meal-tag">Jantar</span><span class="meal-desc">Hambúrguer fit Airfryer</span></div>
+
+  <div class="notes-label">Anotações</div>
+  <div class="notes-lines"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+
+  <div class="footer"><span>Planner Semanal</span><span>Página 6 de 7</span></div>
+</div>
+
+<!-- DOMINGO -->
+<div class="page">
+  <div class="page-header">
+    <span class="day-title">Domingo</span>
+    <input class="date-input" type="text" placeholder="dd/mm/aaaa">
+  </div>
+  <table class="schedule">
+    <tr><td class="time">—</td><td class="activity">Dia de descanso e planejamento da semana</td></tr>
+  </table>
+
+  <div class="section-label">Tarefas do dia</div>
+  <div class="tasks">
+    <div class="task-item"><span class="checkbox"></span> Planejar semana</div>
+    <div class="task-item"><span class="checkbox"></span> Descansar</div>
+  </div>
+
+  <div class="section-label">Refeições</div>
+  <div class="meal-row"><span class="meal-tag">Café</span><span class="meal-desc">Overnight Oats</span></div>
+  <div class="meal-row"><span class="meal-tag">Almoço</span><span class="meal-desc">Marmita</span></div>
+  <div class="meal-row"><span class="meal-tag">Lanche</span><span class="meal-desc">Whey + fruta + castanha</span></div>
+  <div class="meal-row"><span class="meal-tag">Jantar</span><span class="meal-desc">Hambúrguer fit Airfryer</span></div>
+
+  <div class="notes-label">Anotações da semana</div>
+  <div class="notes-lines"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+
+  <div class="footer"><span>Planner Semanal</span><span>Página 7 de 7</span></div>
+</div>
+
+</body>
+</html>

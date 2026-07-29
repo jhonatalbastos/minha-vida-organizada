@@ -1,0 +1,156 @@
+name: 📱 Build Android APK
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      build-method:
+        description: 'Método de build'
+        type: choice
+        options:
+          - capacitor
+          - pwabuilder
+        default: 'capacitor'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "apk-build-${{ github.ref }}"
+  cancel-in-progress: false
+
+jobs:
+  deploy-pwa:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+
+      - name: Generate PNG icons
+        run: |
+          cd app
+          mkdir -p icons
+          # Create placeholder PNG icons for Android build
+          node -e "
+          const fs = require('fs');
+          // Minimal valid PNG (blue square) - replace with your actual icon later
+          const png = Buffer.from(
+            'iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlAp8mAAAAA1BMVEX///+nxBvIAAAASElE' +
+            'QVR4nO3BMQEAAADCoPVPbQwfoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' +
+            'AAAAAAAAAAAAAAAAAAAAAAD+BqgAAAH5U9ZWAAAAAElFTkSuQmCC',
+            'base64'
+          );
+          fs.writeFileSync('icons/icon-192.png', png);
+          fs.writeFileSync('icons/icon-512.png', png);
+          console.log('✓ Placeholder icons created');
+          "
+
+      - name: Upload PWA
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './app'
+
+      - name: Deploy to Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  build-apk:
+    runs-on: ubuntu-latest
+    needs: deploy-pwa
+    if: ${{ github.event.inputs.build-method != 'pwabuilder' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept SDK Licenses
+        run: |
+          SDK_ROOT=${ANDROID_SDK_ROOT:-$ANDROID_HOME}
+          yes | $SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
+          yes | $SDK_ROOT/tools/bin/sdkmanager --licenses 2>/dev/null || true
+          yes | $SDK_ROOT/cmdline-tools/*/bin/sdkmanager --licenses 2>/dev/null || true
+
+      - name: Generate Debug Keystore
+        run: |
+          keytool -genkey -v -keystore ~/.android/debug.keystore \
+            -storepass android -alias androiddebugkey -keypass android \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=Debug, OU=Android, O=MinhaVida, L=Cidade, ST=Estado, C=BR" 2>/dev/null || true
+
+      - name: Setup Capacitor
+        run: |
+          cd app
+          npm init -y
+          npm install @capacitor/core @capacitor/cli @capacitor/android
+          mkdir -p www
+          cp -r index.html manifest.json sw.js css js icons www/
+
+      - name: Init Capacitor Android
+        run: |
+          cd app
+          npx cap init "Minha Vida Organizada" "com.jhona.organizacao" --webDir www --no-git
+          npx cap add android
+
+      - name: Build APK
+        run: |
+          cd app/android
+          chmod +x gradlew
+          export ANDROID_HOME=$ANDROID_SDK_ROOT
+          ./gradlew assembleRelease --no-daemon -Dorg.gradle.jvmargs=-Xmx2g
+
+      - name: Sign APK with Debug Key
+        run: |
+          cd app/android
+          APK_DIR="app/build/outputs/apk/release"
+          if [ -f "$APK_DIR/app-release-unsigned.apk" ]; then
+            # Find apksigner (use latest build-tools version)
+            BUILD_TOOLS=$(ls -d $ANDROID_SDK_ROOT/build-tools/*/ 2>/dev/null | tail -1)
+            APKSIGNER="${BUILD_TOOLS}apksigner"
+            if [ ! -f "$APKSIGNER" ]; then
+              APKSIGNER=$(which apksigner 2>/dev/null || echo "")
+            fi
+            if [ -n "$APKSIGNER" ]; then
+              $APKSIGNER sign --ks ~/.android/debug.keystore \
+                --ks-pass pass:android --ks-key-alias androiddebugkey \
+                --out "$APK_DIR/MinhaVida-Organizada.apk" \
+                "$APK_DIR/app-release-unsigned.apk"
+              echo "✅ APK signed"
+            else
+              cp "$APK_DIR/app-release-unsigned.apk" "$APK_DIR/MinhaVida-Organizada.apk"
+              echo "⚠️ APK copied without signing"
+            fi
+          else
+            APK_DIR="app/build/outputs/apk/debug"
+            if [ -f "$APK_DIR/app-debug.apk" ]; then
+              cp "$APK_DIR/app-debug.apk" "$APK_DIR/MinhaVida-Organizada.apk"
+              echo "✅ Debug APK copied"
+            fi
+          fi
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: MinhaVida-Organizada-APK
+          path: |
+            app/android/app/build/outputs/apk/release/*.apk
+            app/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: warn
+          retention-days: 90
