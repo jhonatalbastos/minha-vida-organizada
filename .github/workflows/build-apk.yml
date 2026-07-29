@@ -67,7 +67,7 @@ jobs:
       - name: 🏗️ Inicializar Capacitor para Android
         run: |
           cd app
-          npx cap init "Minha Vida Organizada" "com.jhona.organizacao" --webDir www --no-git
+          npx cap init "Minha Vida Organizada" "com.jhona.organizacao" --web-dir www --no-git
           npx cap add android
 
       - name: 🔨 Compilar APK
