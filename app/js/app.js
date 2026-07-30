@@ -1612,7 +1612,9 @@
 
   function requestNotificationPermission() {
     // === TRY 1: Capacitor native permissions (APK / Android WebView) ===
-    if (window.Capacitor?.Plugins?.LocalNotifications?.requestPermissions) {
+    // Só tenta o Capacitor se estiver rodando nativamente (Android APK)
+    if (window.Capacitor?.Plugins?.LocalNotifications?.requestPermissions
+        && Capacitor.isNativePlatform?.()) {
       Capacitor.Plugins.LocalNotifications.requestPermissions()
         .then(result => {
           if (result.granted) {
@@ -1688,8 +1690,8 @@
 
     if (notifications.length === 0) return;
 
-    // === TRY 1: Capacitor native plugin (works when app is closed) ===
-    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
+    // === TRY 1: Capacitor native plugin (só no APK nativo) ===
+    if (window.Capacitor?.Plugins?.LocalNotifications && Capacitor.isNativePlatform?.()) {
       try {
         Capacitor.Plugins.LocalNotifications.schedule({
           notifications: notifications.map(n => ({
