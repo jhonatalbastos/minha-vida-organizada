@@ -1886,9 +1886,21 @@
       date: getDayName(today)
     });
 
-    // Usa @capacitor/filesystem para escrever um arquivo JSON
-    // O widget nativo lê desse mesmo arquivo — MÉTODO CONFIÁVEL
     function trySave(remainingTries) {
+      // === TRY 1: Plugin nativo WidgetDataBridge (salva arquivo + força refresh) ===
+      if (window.Capacitor?.Plugins?.WidgetDataBridge) {
+        window.Capacitor.Plugins.WidgetDataBridge.syncWidgetData({ data: data })
+          .then(() => console.log('✅ Widget synced via native plugin'))
+          .catch(err => {
+            console.warn('Widget native plugin failed:', err);
+            saveViaFilesystem(remainingTries);
+          });
+        return;
+      }
+      saveViaFilesystem(remainingTries);
+    }
+
+    function saveViaFilesystem(remainingTries) {
       try {
         if (window.Capacitor?.Plugins?.Filesystem) {
           window.Capacitor.Plugins.Filesystem.writeFile({
@@ -1901,40 +1913,33 @@
           }).catch(err => {
             console.warn('Widget sync via Filesystem failed:', err);
             if (remainingTries > 0) {
-              setTimeout(() => trySave(remainingTries - 1), 1500);
+              setTimeout(() => saveViaFilesystem(remainingTries - 1), 1500);
             }
           });
-          return true;
-        } else {
-          // Fallback: tenta Preferences (caso Filesystem não esteja disponível)
-          if (window.Capacitor?.Plugins?.Preferences) {
-            window.Capacitor.Plugins.Preferences.set({ key: 'widget_data', value: data })
-              .catch(() => {});
-            return true;
-          }
+          return;
         }
       } catch (e) {
         console.warn('Widget sync error:', e);
       }
       if (remainingTries > 0) {
-        setTimeout(() => trySave(remainingTries - 1), 1500);
-      } else {
-        console.warn('Widget sync: giving up after retries');
+        setTimeout(() => saveViaFilesystem(remainingTries - 1), 1500);
       }
-      return false;
     }
 
     trySave(10);
   }
 
   function syncWidgetDataManual() {
-    // Versão chamada pelo botão manual — com feedback visual
     if (!window.Capacitor?.isNativePlatform?.()) {
       showModal('📋 Widget', 'Widget só disponível no APK Android.');
       return;
     }
     syncWidgetData();
-    showModal('📋 Widget', 'Sincronizando dados com o widget... Atualize a tela inicial para ver.');
+    showModal('📋 Widget', '🔄 Sincronizando...
+
+Os dados serão enviados para o widget.
+Se não aparecer em alguns segundos,
+remova e adicione o widget novamente.');
   }
 
   // ==================================================================
