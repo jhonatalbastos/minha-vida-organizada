@@ -234,6 +234,71 @@
     { key: 'Duração', value: '22 semanas (Ago–Dez 2026)' }
   ];
 
+  // ===== TABELA TACO (versão compacta com alimentos comuns brasileiros) =====
+  // Fonte: Tabela Brasileira de Composição de Alimentos (TACO) - valores por 100g
+  const TACO_DB = [
+    { nome:'Arroz integral cozido', cal:124, prot:2.6, fat:1.0, carbs:25.8 },
+    { nome:'Arroz branco cozido', cal:128, prot:2.5, fat:0.2, carbs:28.1 },
+    { nome:'Feijão carioca cozido', cal:76, prot:4.8, fat:0.5, carbs:13.6 },
+    { nome:'Feijão preto cozido', cal:77, prot:4.5, fat:0.5, carbs:14.0 },
+    { nome:'Frango grelhado (peito)', cal:159, prot:32.0, fat:2.5, carbs:0.0 },
+    { nome:'Frango cozido (coxão)', cal:157, prot:25.0, fat:5.8, carbs:0.0 },
+    { nome:'Carne bovina moída cozida', cal:210, prot:26.0, fat:11.0, carbs:0.0 },
+    { nome:'Carne bovina grelhada (patinho)', cal:190, prot:31.0, fat:7.0, carbs:0.0 },
+    { nome:'Ovo de galinha cozido', cal:146, prot:13.3, fat:9.5, carbs:1.2 },
+    { nome:'Ovo frito', cal:240, prot:15.6, fat:18.6, carbs:1.2 },
+    { nome:'Leite integral', cal:61, prot:3.2, fat:3.6, carbs:4.9 },
+    { nome:'Leite semidesnatado', cal:47, prot:3.0, fat:1.6, carbs:5.0 },
+    { nome:'Iogurte natural', cal:51, prot:4.1, fat:2.6, carbs:4.2 },
+    { nome:'Pão integral', cal:247, prot:9.2, fat:3.8, carbs:44.6 },
+    { nome:'Pão francês', cal:300, prot:8.0, fat:3.1, carbs:58.6 },
+    { nome:'Aveia em flocos', cal:389, prot:13.9, fat:8.5, carbs:66.6 },
+    { nome:'Banana prata', cal:91, prot:1.3, fat:0.1, carbs:22.3 },
+    { nome:'Banana nanica', cal:92, prot:1.4, fat:0.1, carbs:23.6 },
+    { nome:'Maçã com casca', cal:56, prot:0.3, fat:0.2, carbs:14.2 },
+    { nome:'Tomate', cal:18, prot:1.1, fat:0.2, carbs:3.5 },
+    { nome:'Alface crespa', cal:14, prot:0.9, fat:0.1, carbs:2.8 },
+    { nome:'Cenoura cozida', cal:37, prot:0.8, fat:0.2, carbs:8.3 },
+    { nome:'Brócolis cozido', cal:27, prot:2.1, fat:0.5, carbs:4.5 },
+    { nome:'Batata inglesa cozida', cal:81, prot:2.0, fat:0.1, carbs:18.5 },
+    { nome:'Batata doce cozida', cal:77, prot:1.4, fat:0.1, carbs:18.4 },
+    { nome:'Batata doce assada', cal:103, prot:1.8, fat:0.2, carbs:24.2 },
+    { nome:'Whey protein (dose 30g)', cal:114, prot:24.0, fat:1.5, carbs:2.0 },
+    { nome:'Castanha do pará', cal:643, prot:14.5, fat:63.5, carbs:12.3 },
+    { nome:'Castanha de caju torrada', cal:570, prot:15.0, fat:48.0, carbs:28.0 },
+    { nome:'Pasta de amendoim', cal:588, prot:25.0, fat:50.0, carbs:20.0 },
+    { nome:'Azeite de oliva (1 colher = 15ml)', cal:119, prot:0.0, fat:13.5, carbs:0.0 },
+    { nome:'Quinoa cozida', cal:120, prot:4.4, fat:1.9, carbs:21.3 },
+    { nome:'Hambúrguer bovino grelhado', cal:230, prot:25.0, fat:14.0, carbs:1.0 },
+    { nome:'Pão de hambúrguer', cal:270, prot:8.5, fat:4.5, carbs:48.0 },
+    { nome:'Queijo muçarela', cal:280, prot:22.0, fat:21.0, carbs:2.0 },
+    { nome:'Queijo minas frescal', cal:264, prot:18.0, fat:20.0, carbs:3.0 },
+    { nome:'Atum enlatado em óleo', cal:200, prot:26.5, fat:10.0, carbs:0.0 },
+    { nome:'Salmão grelhado', cal:231, prot:25.4, fat:13.6, carbs:0.0 },
+    { nome:'Abacate', cal:96, prot:1.2, fat:8.4, carbs:6.0 },
+    { nome:'Mamão papaia', cal:40, prot:0.5, fat:0.1, carbs:10.2 },
+    { nome:'Laranja pera', cal:37, prot:0.8, fat:0.1, carbs:9.4 },
+    { nome:'Couve refogada', cal:50, prot:2.5, fat:3.0, carbs:5.0 },
+    { nome:'Espinafre refogado', cal:60, prot:3.5, fat:3.0, carbs:6.0 },
+    { nome:'Chia semente', cal:404, prot:16.5, fat:30.7, carbs:42.1 },
+    { nome:'Linhaça dourada', cal:497, prot:14.1, fat:38.0, carbs:33.5 },
+    { nome:'Abobrinha cozida', cal:18, prot:1.1, fat:0.1, carbs:3.6 },
+    { nome:'Vagem cozida', cal:28, prot:1.9, fat:0.2, carbs:6.2 },
+    { nome:'Pimentão vermelho', cal:27, prot:1.0, fat:0.3, carbs:5.8 },
+    { nome:'Cebola', cal:35, prot:1.2, fat:0.1, carbs:8.2 },
+    { nome:'Alho', cal:113, prot:4.4, fat:0.2, carbs:25.3 },
+    { nome:'Chuchu cozido', cal:14, prot:0.6, fat:0.1, carbs:3.1 },
+    { nome:'Ervilha em conserva', cal:80, prot:5.4, fat:0.5, carbs:14.5 },
+    { nome:'Milho verde cozido', cal:98, prot:3.2, fat:1.2, carbs:20.8 },
+    { nome:'Macarrão cozido', cal:131, prot:4.2, fat:0.6, carbs:27.5 },
+    { nome:'Rúcula', cal:31, prot:2.0, fat:0.4, carbs:4.0 },
+    { nome:'Repolho refogado', cal:34, prot:1.5, fat:1.8, carbs:4.5 },
+    { nome:'Beterraba cozida', cal:39, prot:1.3, fat:0.1, carbs:8.7 },
+    { nome:'Tofu', cal:76, prot:8.5, fat:4.8, carbs:1.9 },
+    { nome:'Peito de peru defumado', cal:124, prot:23.0, fat:3.5, carbs:1.0 },
+    { nome:'Sardinha em conserva', cal:170, prot:22.5, fat:8.5, carbs:0.0 },
+  ];
+
   // ==================================================================
   // STATE
   // ==================================================================
@@ -250,9 +315,8 @@
     scheduleDone: {},
     tasksDone: {},
     shoppingDone: {},
-    // Water
-    waterCount: 0,
-    waterDate: null,
+    // Water (per-date tracking)
+    waterLog: {},
     // Daily log (weight + sleep per dateKey)
     dailyLog: {},
     // Measurements
@@ -263,7 +327,37 @@
     shoppingFilter: 'all',
     // Settings
     startDate: '2026-08-01',
-    initialWeight: 97
+    initialWeight: 97,
+    // Macro goals
+    macroGoals: { cal: 1940, prot: 150, fat: 65, carbs: 200 },
+    // Meals CRUD
+    refeicoes: [
+      { id:'cafe', nome:'Café', horario:'06:10', alimentos:[
+        { nome:'Aveia em flocos', qtd:50 },
+        { nome:'Leite semidesnatado', qtd:150 },
+        { nome:'Banana prata', qtd:100 },
+        { nome:'Whey protein (dose 30g)', qtd:30 }
+      ]},
+      { id:'almoco', nome:'Almoço', horario:'12:00', alimentos:[
+        { nome:'Arroz integral cozido', qtd:150 },
+        { nome:'Frango grelhado (peito)', qtd:120 },
+        { nome:'Brócolis cozido', qtd:80 }
+      ]},
+      { id:'lanche', nome:'Lanche', horario:'15:30', alimentos:[
+        { nome:'Whey protein (dose 30g)', qtd:30 },
+        { nome:'Maçã com casca', qtd:150 },
+        { nome:'Castanha do pará', qtd:20 }
+      ]},
+      { id:'jantar', nome:'Jantar', horario:'18:15', alimentos:[
+        { nome:'Hambúrguer bovino grelhado', qtd:150 },
+        { nome:'Pão de hambúrguer', qtd:50 },
+        { nome:'Queijo muçarela', qtd:30 },
+        { nome:'Tomate', qtd:50 },
+        { nome:'Alface crespa', qtd:20 }
+      ]}
+    ],
+    // Meal consumed tracking per date
+    mealConsumed: {}
   };
 
   // ==================================================================
@@ -294,6 +388,7 @@
     setupWaterTracker();
     setupMeasurementForm();
     setupSettings();
+    setupRefeicoes();
 
     // Notifications
     setupNotifications();
@@ -303,6 +398,9 @@
     registerSW();
     scheduleAlarms();
     syncWidgetData();
+
+    // GitHub sync
+    setupGithubSync();
 
     // Auto-update every minute
     setInterval(() => {
@@ -438,10 +536,10 @@
   function refreshTodayView() {
     updateDateDisplay();
     renderSchedule();
+    renderMeals();
     renderDailyLog();
     updateProgressRing();
-    // Reset water when viewing a different day
-    // (only today's water is tracked)
+    setupWaterTracker();
   }
 
   function updateDateDisplay() {
@@ -511,6 +609,8 @@
     } else if (view === 'treinos') {
       renderCalistenia();
       renderRunning();
+    } else if (view === 'refeicoes') {
+      renderRefeicoes();
     } else if (view === 'tarefas') {
       renderTasks();
       renderShopping();
@@ -685,25 +785,91 @@
 
   function renderMeals() {
     const container = document.getElementById('meals-today');
-    container.innerHTML = MEALS.map(m => `
-      <div class="meal-card" onclick="showMealDetail('${m.name}')">
-        <span class="meal-emoji">${m.emoji}</span>
-        <span class="meal-name">${m.name}</span>
-        <span class="meal-time">${m.time}</span>
-        <span class="meal-desc">${m.desc}</span>
-      </div>
-    `).join('');
+    const dateKey = STATE.currentDate;
+    const consumed = STATE.mealConsumed && STATE.mealConsumed[dateKey] ? STATE.mealConsumed[dateKey] : [];
 
-    window.showMealDetail = function(name) {
-      const meal = MEALS.find(m => m.name === name);
-      if (!meal) return;
-      showModal(
-        meal.emoji + ' ' + meal.name,
-        `<p style="margin-bottom:6px;"><strong>Receita:</strong></p>
-         <p style="font-size:13px;color:var(--text-secondary);">${meal.recipe}</p>
-         <p style="margin-top:8px;font-size:12px;color:var(--text-muted);">${meal.desc}</p>`
-      );
+    container.innerHTML = (STATE.refeicoes && STATE.refeicoes.length > 0 ? STATE.refeicoes : MEALS.map(m => ({
+      id: m.name, nome: m.name, horario: m.time, alimentos: [],
+      emoji: m.emoji, desc: m.desc
+    }))).map(m => {
+      const isConsumed = consumed.includes(m.id || m.nome);
+      // Calculate macros for this meal
+      const macros = calcularMacrosRefeicao(m);
+      return `
+        <div class="meal-card ${isConsumed ? 'consumed' : ''}">
+          <span class="meal-emoji">${m.emoji || '🍽️'}</span>
+          <button class="meal-ok-btn" onclick="toggleMealConsumed('${m.id || m.nome}')">${isConsumed ? '✅' : '⭕'}</button>
+          <span class="meal-name">${m.nome}</span>
+          <span class="meal-time">${m.horario}</span>
+          <span class="meal-desc" style="font-size:10px;color:var(--text-muted);display:block;margin-top:2px;">
+            ${macros.cal > 0 ? `🔥${Math.round(macros.cal)} 💪${Math.round(macros.prot)}g 🥑${Math.round(macros.fat)}g 🌾${Math.round(macros.carbs)}g` : (m.desc || '')}
+          </span>
+        </div>
+      `;
+    }).join('');
+
+    window.toggleMealConsumed = function(id) {
+      if (!STATE.mealConsumed) STATE.mealConsumed = {};
+      if (!STATE.mealConsumed[dateKey]) STATE.mealConsumed[dateKey] = [];
+      const arr = STATE.mealConsumed[dateKey];
+      const idx = arr.indexOf(id);
+      if (idx >= 0) arr.splice(idx, 1);
+      else arr.push(id);
+      saveState();
+      renderMeals();
+      renderMacroSummary();
     };
+
+    renderMacroSummary();
+  }
+
+  function calcularMacrosRefeicao(ref) {
+    if (!ref.alimentos || ref.alimentos.length === 0) return { cal:0, prot:0, fat:0, carbs:0 };
+    let cal=0, prot=0, fat=0, carbs=0;
+    ref.alimentos.forEach(al => {
+      const taco = TACO_DB.find(t => t.nome === al.nome);
+      if (taco) {
+        const fator = al.qtd / 100;
+        cal += taco.cal * fator;
+        prot += taco.prot * fator;
+        fat += taco.fat * fator;
+        carbs += taco.carbs * fator;
+      }
+    });
+    return { cal:Math.round(cal), prot:Math.round(prot*10)/10, fat:Math.round(fat*10)/10, carbs:Math.round(carbs*10)/10 };
+  }
+
+  function renderMacroSummary() {
+    const dateKey = STATE.currentDate;
+    const consumed = STATE.mealConsumed && STATE.mealConsumed[dateKey] ? STATE.mealConsumed[dateKey] : [];
+    const refs = STATE.refeicoes || [];
+    let totalCal=0, totalProt=0, totalFat=0, totalCarbs=0;
+
+    refs.forEach(ref => {
+      if (consumed.includes(ref.id || ref.nome)) {
+        const m = calcularMacrosRefeicao(ref);
+        totalCal += m.cal;
+        totalProt += m.prot;
+        totalFat += m.fat;
+        totalCarbs += m.carbs;
+      }
+    });
+
+    const goals = STATE.macroGoals || { cal:1940, prot:150, fat:65, carbs:200 };
+    updateMacroBar('macro-cal-bar', 'macro-cal-text', totalCal, goals.cal, '#EF4444');
+    updateMacroBar('macro-prot-bar', 'macro-prot-text', totalProt, goals.prot, '#3B82F6');
+    updateMacroBar('macro-fat-bar', 'macro-fat-text', totalFat, goals.fat, '#F59E0B');
+    updateMacroBar('macro-carbs-bar', 'macro-carbs-text', totalCarbs, goals.carbs, '#8B5CF6');
+  }
+
+  function updateMacroBar(barId, textId, current, goal, color) {
+    const bar = document.getElementById(barId);
+    const text = document.getElementById(textId);
+    if (!bar || !text) return;
+    const pct = goal > 0 ? Math.min(100, (current / goal) * 100) : 0;
+    bar.style.width = pct + '%';
+    bar.style.background = pct >= 100 ? '#16A34A' : color;
+    text.textContent = `${Math.round(current)} / ${goal} ${textId.includes('cal') ? 'kcal' : 'g'}`;
   }
 
   // ==================================================================
@@ -725,13 +891,19 @@
     });
 
     document.getElementById('btn-save-sleep').addEventListener('click', () => {
-      const val = parseFloat(document.getElementById('input-daily-sleep').value);
-      if (!val || val < 0 || val > 24) return;
+      const hours = parseInt(document.getElementById('input-sleep-hours').value) || 0;
+      const minutes = parseInt(document.getElementById('input-sleep-minutes').value) || 0;
+      const val = hours + (minutes / 60);
+      if (val <= 0 || val > 24) {
+        showModal('😴', 'Insira um horário válido (0-24h)');
+        return;
+      }
       if (!STATE.dailyLog) STATE.dailyLog = {};
       if (!STATE.dailyLog[STATE.currentDate]) STATE.dailyLog[STATE.currentDate] = {};
-      STATE.dailyLog[STATE.currentDate].sleep = val;
+      STATE.dailyLog[STATE.currentDate].sleep = Math.round(val * 100) / 100;
       saveState();
-      document.getElementById('input-daily-sleep').value = '';
+      document.getElementById('input-sleep-hours').value = '';
+      document.getElementById('input-sleep-minutes').value = '';
       renderDailyLog();
     });
 
@@ -801,7 +973,9 @@
         display.innerHTML += `<span>⚖️ <strong>${log.weight} kg</strong></span>`;
       }
       if (log.sleep) {
-        display.innerHTML += `<span>😴 <strong>${log.sleep}h</strong> de sono</span>`;
+        const sh = Math.floor(log.sleep);
+        const sm = Math.round((log.sleep - sh) * 60);
+        display.innerHTML += `<span>😴 <strong>${sh}h${sm}m</strong> de sono</span>`;
       }
     }
 
@@ -890,50 +1064,50 @@
   // ==================================================================
 
   function setupWaterTracker() {
-    const today = getDateKey();
-    if (STATE.waterCount === undefined || STATE.waterCount === null) STATE.waterCount = 0;
-    if (STATE.waterDate !== today) {
-      STATE.waterCount = 0;
-      STATE.waterDate = today;
-      saveState();
-    }
+    const dateKey = STATE.currentDate;
+    if (!STATE.waterLog) STATE.waterLog = {};
+    if (STATE.waterLog[dateKey] === undefined) STATE.waterLog[dateKey] = 0;
     renderWaterDisplay();
   }
 
   function renderWaterDisplay() {
-    renderWaterCups();
-    const currentLiters = ((STATE.waterCount * WATER_ML_PER_CUP) / 1000).toFixed(1);
+    const dateKey = STATE.currentDate;
+    const count = (STATE.waterLog && STATE.waterLog[dateKey]) || 0;
+    renderWaterCups(count);
+    const currentLiters = ((count * WATER_ML_PER_CUP) / 1000).toFixed(1);
     const totalLiters = WATER_TOTAL_L.toFixed(1);
-    document.getElementById('water-counter').textContent = `${STATE.waterCount} / ${WATER_CUPS} copos`;
+    document.getElementById('water-counter').textContent = `${count} / ${WATER_CUPS} copos`;
 
-    // Liter bar
-    const pct = Math.min(100, (STATE.waterCount / WATER_CUPS) * 100);
+    const pct = Math.min(100, (count / WATER_CUPS) * 100);
     const fill = document.getElementById('water-liter-fill');
     if (fill) fill.style.width = pct + '%';
     const text = document.getElementById('water-liter-text');
     if (text) text.textContent = `${currentLiters} de ${totalLiters} litros`;
   }
 
-  function renderWaterCups() {
+  function renderWaterCups(count) {
     const container = document.getElementById('water-tracker');
     if (!container) return;
     container.innerHTML = '';
     for (let i = 0; i < WATER_CUPS; i++) {
       const cup = document.createElement('div');
-      cup.className = 'water-cup' + (i < STATE.waterCount ? ' filled' : '');
-      cup.textContent = i < STATE.waterCount ? '💧' : '';
+      cup.className = 'water-cup' + (i < count ? ' filled' : '');
+      cup.textContent = i < count ? '💧' : '';
       cup.addEventListener('click', () => toggleWater(i));
       container.appendChild(cup);
     }
   }
 
   function toggleWater(index) {
-    if (index < STATE.waterCount) {
-      STATE.waterCount = index;
+    const dateKey = STATE.currentDate;
+    if (!STATE.waterLog) STATE.waterLog = {};
+    if (STATE.waterLog[dateKey] === undefined) STATE.waterLog[dateKey] = 0;
+    
+    if (index < STATE.waterLog[dateKey]) {
+      STATE.waterLog[dateKey] = index;
     } else {
-      STATE.waterCount = index + 1;
+      STATE.waterLog[dateKey] = index + 1;
     }
-    STATE.waterDate = getDateKey();
     saveState();
     renderWaterDisplay();
   }
@@ -946,6 +1120,7 @@
     renderDayTabs();
     renderDayTasks();
     setupTaskInput();
+    renderDailyExercise();
   }
 
   function renderDayTabs() {
@@ -1299,7 +1474,7 @@
         : '#E2E8F0';
       return `
         <div class="sleep-bar-wrap">
-          <span class="sleep-bar-val">${b.hours ? b.hours + 'h' : '--'}</span>
+          <span class="sleep-bar-val">${b.hours ? Math.floor(b.hours) + 'h' + Math.round((b.hours - Math.floor(b.hours)) * 60) + 'm' : '--'}</span>
           <div class="sleep-bar" style="height:${pct}%;background:${color};"></div>
           <span class="sleep-bar-label">${b.dayName}</span>
         </div>
@@ -1531,6 +1706,360 @@
   }
 
   // ==================================================================
+  // REFEIÇÕES CRUD
+  // ==================================================================
+
+  function renderRefeicoes() {
+    renderRefeicoesList();
+    setupTacoSearch();
+    setupRefeicaoEditorEvents();
+  }
+
+  function setupRefeicoes() {
+    document.getElementById('btn-add-refeicao')?.addEventListener('click', () => {
+      openRefeicaoEditor(null);
+    });
+  }
+
+  function renderRefeicoesList() {
+    const container = document.getElementById('refeicoes-list');
+    const refs = STATE.refeicoes || [];
+
+    if (refs.length === 0) {
+      container.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:20px;">Nenhuma refeição cadastrada. Clique em "+ Nova" para adicionar.</p>';
+      return;
+    }
+
+    container.innerHTML = refs.map((ref, idx) => {
+      const macros = calcularMacrosRefeicao(ref);
+      return `
+        <div class="refeicao-card">
+          <div class="refeicao-header">
+            <span class="refeicao-name">${ref.nome}</span>
+            <span class="refeicao-time">${ref.horario}</span>
+          </div>
+          <div class="refeicao-macros">
+            <span>🔥 ${macros.cal} kcal</span>
+            <span>💪 ${macros.prot}g</span>
+            <span>🥑 ${macros.fat}g</span>
+            <span>🌾 ${macros.carbs}g</span>
+          </div>
+          <ul class="refeicao-foods">
+            ${ref.alimentos.map(al => `<li class="refeicao-food-item"><span>${al.nome}</span><span>${al.qtd}g</span></li>`).join('')}
+          </ul>
+          <div class="refeicao-actions">
+            <button class="btn-small" onclick="window.openRefeicaoEditor(${idx})">✏️ Editar</button>
+            <button class="btn-small" onclick="window.duplicarRefeicao(${idx})" style="background:var(--success-bg);color:var(--success);">📋 Duplicar</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    window.openRefeicaoEditor = function(idx) {
+      if (idx !== undefined && idx !== null) {
+        const ref = STATE.refeicoes[idx];
+        document.getElementById('refeicao-editor-name').value = ref.nome;
+        document.getElementById('refeicao-editor-time').value = ref.horario;
+        document.getElementById('refeicao-editor-foods').value = ref.alimentos.map(a => `${a.nome}, ${a.qtd}`).join('\n');
+        document.getElementById('refeicao-editor').dataset.editIdx = idx;
+        document.getElementById('refeicao-editor-title').textContent = '✏️ Editar Refeição';
+        document.getElementById('btn-delete-refeicao').style.display = '';
+      } else {
+        document.getElementById('refeicao-editor-name').value = '';
+        document.getElementById('refeicao-editor-time').value = '08:00';
+        document.getElementById('refeicao-editor-foods').value = '';
+        document.getElementById('refeicao-editor').dataset.editIdx = '';
+        document.getElementById('refeicao-editor-title').textContent = '➕ Nova Refeição';
+        document.getElementById('btn-delete-refeicao').style.display = 'none';
+      }
+      document.getElementById('refeicao-editor').style.display = 'block';
+      document.getElementById('refeicao-editor').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    window.duplicarRefeicao = function(idx) {
+      const ref = JSON.parse(JSON.stringify(STATE.refeicoes[idx]));
+      ref.id = ref.id + '_copy_' + Date.now();
+      ref.nome = ref.nome + ' (cópia)';
+      STATE.refeicoes.push(ref);
+      saveState();
+      renderRefeicoesList();
+    };
+  }
+
+  function setupRefeicaoEditorEvents() {
+    document.getElementById('btn-save-refeicao')?.addEventListener('click', () => {
+      const nome = document.getElementById('refeicao-editor-name').value.trim();
+      const horario = document.getElementById('refeicao-editor-time').value;
+      const foodsText = document.getElementById('refeicao-editor-foods').value.trim();
+      if (!nome) { showModal('Atenção', 'Digite um nome para a refeição'); return; }
+
+      const alimentos = foodsText.split('\n').filter(l => l.trim()).map(line => {
+        const parts = line.split(',').map(s => s.trim());
+        return { nome: parts[0], qtd: parseInt(parts[1]) || 100 };
+      });
+
+      const editIdx = document.getElementById('refeicao-editor').dataset.editIdx;
+      if (editIdx && editIdx.length > 0) {
+        STATE.refeicoes[parseInt(editIdx)] = { id: STATE.refeicoes[parseInt(editIdx)].id, nome, horario, alimentos };
+      } else {
+        STATE.refeicoes.push({ id: 'ref_' + Date.now(), nome, horario, alimentos });
+      }
+
+      saveState();
+      document.getElementById('refeicao-editor').style.display = 'none';
+      renderRefeicoesList();
+      renderMeals();
+    });
+
+    document.getElementById('btn-cancel-refeicao')?.addEventListener('click', () => {
+      document.getElementById('refeicao-editor').style.display = 'none';
+    });
+
+    document.getElementById('btn-delete-refeicao')?.addEventListener('click', () => {
+      const editIdx = parseInt(document.getElementById('refeicao-editor').dataset.editIdx);
+      if (isNaN(editIdx)) return;
+      showModal('🗑️ Excluir', `Excluir "${STATE.refeicoes[editIdx].nome}"?`, () => {
+        STATE.refeicoes.splice(editIdx, 1);
+        saveState();
+        document.getElementById('refeicao-editor').style.display = 'none';
+        renderRefeicoesList();
+        renderMeals();
+      });
+    });
+  }
+
+  // ==================================================================
+  // TACO SEARCH
+  // ==================================================================
+
+  function setupTacoSearch() {
+    const input = document.getElementById('taco-search-input');
+    const btn = document.getElementById('btn-taco-search');
+    const results = document.getElementById('taco-results');
+
+    function search() {
+      const q = input.value.trim().toLowerCase();
+      if (!q || q.length < 2) {
+        results.innerHTML = '<div class="taco-empty">Digite pelo menos 2 caracteres para buscar 🔍</div>';
+        return;
+      }
+      const found = TACO_DB.filter(t => t.nome.toLowerCase().includes(q)).slice(0, 15);
+      if (found.length === 0) {
+        results.innerHTML = '<div class="taco-empty">Nenhum alimento encontrado. Adicione manualmente abaixo.</div>';
+        return;
+      }
+      results.innerHTML = found.map(t => `
+        <div class="taco-item" onclick="window.addTacoToMeals('${t.nome}', ${t.cal}, ${t.prot}, ${t.fat}, ${t.carbs})">
+          <span class="taco-name">${t.nome}</span>
+          <span class="taco-macros">🔥${t.cal} 💪${t.prot}g 🥑${t.fat}g 🌾${t.carbs}g</span>
+        </div>
+      `).join('');
+    }
+
+    if (btn) btn.addEventListener('click', search);
+    if (input) input.addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
+
+    window.addTacoToMeals = function(nome, cal, prot, fat, carbs) {
+      // Adicionar o alimento como linha no editor de refeição
+      const foods = document.getElementById('refeicao-editor-foods');
+      if (foods) {
+        const current = foods.value.trim();
+        foods.value = current ? current + '\n' + nome + ', 100' : nome + ', 100';
+        showModal('✅ Adicionado', `${nome} (100g) adicionado ao editor. Ajuste a quantidade se necessário.`);
+      }
+    };
+
+    document.getElementById('btn-add-manual-food')?.addEventListener('click', () => {
+      const nome = document.getElementById('manual-food-name').value.trim();
+      const porcao = parseInt(document.getElementById('manual-food-portion').value) || 100;
+      const cal = parseFloat(document.getElementById('manual-food-cal').value) || 0;
+      const prot = parseFloat(document.getElementById('manual-food-prot').value) || 0;
+      const fat = parseFloat(document.getElementById('manual-food-fat').value) || 0;
+      const carbs = parseFloat(document.getElementById('manual-food-carbs').value) || 0;
+      if (!nome) { showModal('Atenção', 'Digite o nome do alimento'); return; }
+
+      const foods = document.getElementById('refeicao-editor-foods');
+      if (foods) {
+        const current = foods.value.trim();
+        foods.value = current ? current + '\n' + nome + ', ' + porcao : nome + ', ' + porcao;
+        document.getElementById('manual-food-name').value = '';
+        document.getElementById('manual-food-cal').value = '';
+        document.getElementById('manual-food-prot').value = '';
+        document.getElementById('manual-food-fat').value = '';
+        document.getElementById('manual-food-carbs').value = '';
+        showModal('✅ Adicionado', `${nome} (${porcao}g) adicionado ao editor.`);
+      }
+    });
+  }
+
+  // ==================================================================
+  // DAILY EXERCISE
+  // ==================================================================
+
+  function renderDailyExercise() {
+    const container = document.getElementById('daily-exercise-card');
+    if (!container) return;
+    const dayName = getDayNameFromKey(STATE.currentDate);
+    const agendaItem = AGENDA.find(a => a.day === dayName);
+
+    const textEl = document.getElementById('daily-exercise-text');
+    const detailEl = document.getElementById('daily-exercise-detail');
+
+    if (!agendaItem) {
+      textEl.textContent = '🏋️ Nenhum exercício programado para hoje';
+      detailEl.innerHTML = '';
+      return;
+    }
+
+    const isCalistenia = agendaItem.activity.includes('Calistenia');
+    const isCorrida = agendaItem.activity.includes('Corrida');
+
+    textEl.textContent = agendaItem.icon + ' ' + agendaItem.activity;
+
+    if (isCalistenia) {
+      const startDate = new Date(STATE.startDate || '2026-08-01');
+      const weekNum = Math.min(getWeekNumber(startDate), 22);
+      let currentPhase = CALISTENIA[0];
+      for (const phase of CALISTENIA) {
+        const [start, end] = phase.weeks.split('–').map(Number);
+        if (weekNum >= start && weekNum <= end) { currentPhase = phase; break; }
+      }
+      detailEl.innerHTML = currentPhase.exercises.map(ex => `
+        <div class="ex-item">
+          <span>${ex.name}</span>
+          <span style="color:var(--text-secondary);">${ex.reps}</span>
+        </div>
+      `).join('');
+    } else if (isCorrida) {
+      const startDate = new Date(STATE.startDate || '2026-08-01');
+      const weekNum = Math.min(getWeekNumber(startDate), 22);
+      const safeWeek = Math.max(1, weekNum);
+      let currentRun = RUNNING[0];
+      for (const run of RUNNING) {
+        const [start, end] = run.weeks.split('–').map(Number);
+        if (safeWeek >= start && safeWeek <= end) { currentRun = run; break; }
+      }
+      detailEl.innerHTML = `<div class="ex-item"><span>🏃 ${currentRun.dist}</span><span style="color:var(--text-secondary);">${currentRun.method}</span></div>`;
+    } else {
+      detailEl.innerHTML = '';
+    }
+  }
+
+  // ==================================================================
+  // GITHUB SYNC
+  // ==================================================================
+
+  function setupGithubSync() {
+    const btnSync = document.getElementById('btn-github-sync');
+    const btnRestore = document.getElementById('btn-github-restore');
+    const status = document.getElementById('github-status');
+
+    if (btnSync) btnSync.addEventListener('click', async () => {
+      const token = document.getElementById('github-token').value.trim();
+      const repo = document.getElementById('github-repo').value.trim();
+      if (!token || !repo) {
+        setGithubStatus('Preencha o token e o repositório', 'error');
+        return;
+      }
+      setGithubStatus('Sincronizando...', '');
+      try {
+        const data = JSON.stringify(STATE, null, 2);
+        const url = `https://api.github.com/repos/${repo}/contents/minha-vida-dados.json`;
+        
+        // Try to get existing file SHA first
+        let sha = '';
+        try {
+          const getRes = await fetch(url, {
+            headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+          });
+          if (getRes.ok) {
+            const existing = await getRes.json();
+            sha = existing.sha;
+          }
+        } catch(e) { /* file may not exist */ }
+
+        const body = { message: 'Backup Minha Vida ' + new Date().toISOString().split('T')[0], content: btoa(unescape(encodeURIComponent(data))) };
+        if (sha) body.sha = sha;
+
+        const res = await fetch(url, {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
+          body: JSON.stringify(body)
+        });
+
+        if (res.ok) {
+          setGithubStatus('✅ Dados salvos no GitHub com sucesso!', 'success');
+        } else {
+          const err = await res.json();
+          setGithubStatus('❌ Erro: ' + (err.message || 'Falha ao salvar'), 'error');
+        }
+      } catch(e) {
+        setGithubStatus('❌ Erro de conexão: ' + e.message, 'error');
+      }
+    });
+
+    if (btnRestore) btnRestore.addEventListener('click', async () => {
+      const token = document.getElementById('github-token').value.trim();
+      const repo = document.getElementById('github-repo').value.trim();
+      if (!token || !repo) {
+        setGithubStatus('Preencha o token e o repositório', 'error');
+        return;
+      }
+      setGithubStatus('Restaurando...', '');
+      try {
+        const url = `https://api.github.com/repos/${repo}/contents/minha-vida-dados.json`;
+        const res = await fetch(url, {
+          headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+        });
+        if (!res.ok) {
+          setGithubStatus('❌ Arquivo não encontrado no GitHub', 'error');
+          return;
+        }
+        const data = await res.json();
+        const content = decodeURIComponent(escape(atob(data.content)));
+        const parsed = JSON.parse(content);
+        Object.assign(STATE, parsed);
+        saveState();
+        setGithubStatus('✅ Dados restaurados do GitHub! Recarregue o app.', 'success');
+        setTimeout(() => location.reload(), 2000);
+      } catch(e) {
+        setGithubStatus('❌ Erro: ' + e.message, 'error');
+      }
+    });
+
+    // Load saved token/repo
+    try {
+      const saved = localStorage.getItem('githubConfig');
+      if (saved) {
+        const cfg = JSON.parse(saved);
+        if (cfg.token) document.getElementById('github-token').value = cfg.token;
+        if (cfg.repo) document.getElementById('github-repo').value = cfg.repo;
+      }
+    } catch(e) {}
+
+    // Save token/repo when changed
+    document.getElementById('github-token')?.addEventListener('change', saveGithubConfig);
+    document.getElementById('github-repo')?.addEventListener('change', saveGithubConfig);
+  }
+
+  function saveGithubConfig() {
+    try {
+      localStorage.setItem('githubConfig', JSON.stringify({
+        token: document.getElementById('github-token').value,
+        repo: document.getElementById('github-repo').value
+      }));
+    } catch(e) {}
+  }
+
+  function setGithubStatus(msg, type) {
+    const el = document.getElementById('github-status');
+    if (el) {
+      el.textContent = msg;
+      el.className = type;
+    }
+  }
+
+  // ==================================================================
   // SETTINGS
   // ==================================================================
 
@@ -1538,6 +2067,17 @@
     const startDate = STATE.startDate || '2026-08-01';
     document.getElementById('start-date').value = startDate;
     document.getElementById('initial-weight').value = STATE.initialWeight || 97;
+
+    // Macro goals
+    const goals = STATE.macroGoals || { cal: 1940, prot: 150, fat: 65, carbs: 200 };
+    const elCal = document.getElementById('macro-cal-goal');
+    const elProt = document.getElementById('macro-prot-goal');
+    const elFat = document.getElementById('macro-fat-goal');
+    const elCarbs = document.getElementById('macro-carbs-goal');
+    if (elCal) elCal.value = goals.cal;
+    if (elProt) elProt.value = goals.prot;
+    if (elFat) elFat.value = goals.fat;
+    if (elCarbs) elCarbs.value = goals.carbs;
 
     const container = document.getElementById('plan-summary');
     container.innerHTML = PLAN_INFO.map(p => `
@@ -1560,6 +2100,18 @@
       STATE.initialWeight = parseFloat(e.target.value) || 97;
       saveState();
       renderGoals();
+    });
+
+    // Macro goals settings
+    const macroMap = { 'macro-cal-goal': 'cal', 'macro-prot-goal': 'prot', 'macro-fat-goal': 'fat', 'macro-carbs-goal': 'carbs' };
+    Object.keys(macroMap).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('change', e => {
+        if (!STATE.macroGoals) STATE.macroGoals = { cal:1940, prot:150, fat:65, carbs:200 };
+        STATE.macroGoals[macroMap[id]] = parseFloat(e.target.value) || 0;
+        saveState();
+        renderMacroSummary();
+      });
     });
 
     document.getElementById('btn-export-data').addEventListener('click', exportData);

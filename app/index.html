@@ -77,10 +77,35 @@
     </div>
     <div class="schedule-list" id="schedule-list"></div>
 
-    <!-- Today's Meals -->
+    <!-- Today's Meals with Macros -->
     <div class="section-header">
       <h2>🍽️ Refeições</h2>
     </div>
+
+    <!-- Macro Summary Bar -->
+    <div class="macro-summary" id="macro-summary">
+      <div class="macro-item">
+        <span class="macro-label">🔥 Calorias</span>
+        <span class="macro-bar-wrap"><span class="macro-bar" id="macro-cal-bar"></span></span>
+        <span class="macro-value" id="macro-cal-text">0 / 0 kcal</span>
+      </div>
+      <div class="macro-item">
+        <span class="macro-label">💪 Proteínas</span>
+        <span class="macro-bar-wrap"><span class="macro-bar" id="macro-prot-bar"></span></span>
+        <span class="macro-value" id="macro-prot-text">0 / 0 g</span>
+      </div>
+      <div class="macro-item">
+        <span class="macro-label">🥑 Gorduras</span>
+        <span class="macro-bar-wrap"><span class="macro-bar" id="macro-fat-bar"></span></span>
+        <span class="macro-value" id="macro-fat-text">0 / 0 g</span>
+      </div>
+      <div class="macro-item">
+        <span class="macro-label">🌾 Carbs</span>
+        <span class="macro-bar-wrap"><span class="macro-bar" id="macro-carbs-bar"></span></span>
+        <span class="macro-value" id="macro-carbs-text">0 / 0 g</span>
+      </div>
+    </div>
+
     <div class="meals-grid" id="meals-today"></div>
 
     <!-- Water Intake -->
@@ -105,9 +130,21 @@
           <input type="number" id="input-daily-weight" step="0.1" placeholder="83.5" class="daily-input">
           <button class="btn-small-save" id="btn-save-weight">💾</button>
         </div>
-        <div class="daily-log-item">
-          <label>😴 Sono (horas)</label>
-          <input type="number" id="input-daily-sleep" step="0.5" min="0" max="24" placeholder="7.5" class="daily-input">
+        <div class="daily-log-item" style="flex-wrap:wrap;">
+          <label>😴 Sono</label>
+          <select id="input-sleep-hours" class="daily-input" style="max-width:60px;">
+            <option value="">h</option>
+            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+            <option value="3">3</option><option value="4">4</option><option value="5">5</option>
+            <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+            <option value="9">9</option><option value="10">10</option><option value="11">11</option>
+            <option value="12">12</option>
+          </select>
+          <select id="input-sleep-minutes" class="daily-input" style="max-width:60px;">
+            <option value="">min</option>
+            <option value="0">00</option><option value="15">15</option><option value="30">30</option>
+            <option value="45">45</option>
+          </select>
           <button class="btn-small-save" id="btn-save-sleep">💾</button>
         </div>
       </div>
@@ -147,6 +184,14 @@
         <input type="text" id="task-input" placeholder="Nova tarefa..." maxlength="100">
         <button class="btn-add" id="btn-add-task">+</button>
       </div>
+      <!-- Exercise detail per day -->
+      <div class="section-header" style="margin-top:16px;">
+        <h2>🏋️ Exercício do Dia</h2>
+      </div>
+      <div class="daily-exercise-card" id="daily-exercise-card">
+        <p id="daily-exercise-text" style="font-size:13px;color:var(--text-secondary);">Carregando...</p>
+        <div id="daily-exercise-detail" style="margin-top:8px;font-size:12px;"></div>
+      </div>
     </div>
 
     <!-- Sub: Shopping -->
@@ -177,6 +222,81 @@
         </div>
       </div>
       <button class="btn-primary btn-block" id="btn-new-note">+ Nova Nota</button>
+    </div>
+  </section>
+
+  <!-- ===== VIEW: REFEIÇÕES ===== -->
+  <section id="view-refeicoes" class="view">
+    <div class="sub-nav">
+      <button class="sub-nav-btn active" data-sub="minhas-refeicoes">📋 Minhas Refeições</button>
+      <button class="sub-nav-btn" data-sub="taco-busca">🔍 TACO</button>
+    </div>
+
+    <!-- Minhas Refeições -->
+    <div class="sub-view active" id="sub-minhas-refeicoes">
+      <div class="section-header">
+        <h2>🍽️ Refeições do Dia</h2>
+        <button class="btn-small" id="btn-add-refeicao">+ Nova</button>
+      </div>
+      <div id="refeicoes-list" class="refeicoes-list"></div>
+    </div>
+
+    <!-- Busca TACO -->
+    <div class="sub-view" id="sub-taco-busca">
+      <div class="section-header">
+        <h2>🔍 Buscar Alimento</h2>
+      </div>
+      <div class="add-task-bar" style="margin-bottom:10px;">
+        <input type="text" id="taco-search-input" placeholder="Ex: frango, arroz, ovo..." maxlength="100">
+        <button class="btn-add" id="btn-taco-search">🔍</button>
+      </div>
+      <div id="taco-results" class="taco-results"></div>
+      <div class="section-header" style="margin-top:12px;">
+        <h2>➕ Adicionar Manualmente</h2>
+      </div>
+      <div class="manual-food-form" id="manual-food-form">
+        <div class="form-row">
+          <div class="form-group" style="flex:2;">
+            <label>Nome do alimento</label>
+            <input type="text" id="manual-food-name" placeholder="Ex: Frango grelhado">
+          </div>
+          <div class="form-group">
+            <label>Porção (g)</label>
+            <input type="number" id="manual-food-portion" value="100" step="10">
+          </div>
+        </div>
+        <div class="form-row" style="margin-top:6px;">
+          <div class="form-group"><label>🔥 Calorias</label><input type="number" id="manual-food-cal" step="1" placeholder="0"></div>
+          <div class="form-group"><label>💪 Proteínas (g)</label><input type="number" id="manual-food-prot" step="0.1" placeholder="0"></div>
+          <div class="form-group"><label>🥑 Gorduras (g)</label><input type="number" id="manual-food-fat" step="0.1" placeholder="0"></div>
+          <div class="form-group"><label>🌾 Carbs (g)</label><input type="number" id="manual-food-carbs" step="0.1" placeholder="0"></div>
+        </div>
+        <button class="btn-primary btn-block" id="btn-add-manual-food" style="margin-top:8px;">+ Adicionar às Refeições</button>
+      </div>
+    </div>
+
+    <!-- Editor de Refeição (modal inline) -->
+    <div class="refeicao-editor" id="refeicao-editor" style="display:none;">
+      <div class="section-header">
+        <h3 id="refeicao-editor-title">Nova Refeição</h3>
+      </div>
+      <div class="form-group" style="margin-bottom:6px;">
+        <label>Nome da refeição</label>
+        <input type="text" id="refeicao-editor-name" placeholder="Ex: Café da manhã">
+      </div>
+      <div class="form-group" style="margin-bottom:6px;">
+        <label>Horário</label>
+        <input type="time" id="refeicao-editor-time" value="08:00">
+      </div>
+      <div class="form-group" style="margin-bottom:6px;">
+        <label>Alimentos (um por linha: "nome, qtd(g)")</label>
+        <textarea id="refeicao-editor-foods" rows="4" placeholder="Ex:&#10;Arroz integral cozido, 150&#10;Frango grelhado, 120&#10;Brócolis, 80"></textarea>
+      </div>
+      <div class="refeicao-editor-actions" style="display:flex;gap:8px;margin-top:6px;justify-content:flex-end;">
+        <button class="btn-secondary" id="btn-cancel-refeicao">Cancelar</button>
+        <button class="btn-primary" id="btn-save-refeicao">Salvar</button>
+        <button class="btn-danger" id="btn-delete-refeicao" style="display:none;">Excluir</button>
+      </div>
     </div>
   </section>
 
@@ -303,6 +423,22 @@
         <input type="number" id="initial-weight" step="0.1" value="97">
       </div>
       <div class="setting-item">
+        <label>Calorias meta (kcal)</label>
+        <input type="number" id="macro-cal-goal" step="10" value="1940">
+      </div>
+      <div class="setting-item">
+        <label>Proteínas meta (g)</label>
+        <input type="number" id="macro-prot-goal" step="1" value="150">
+      </div>
+      <div class="setting-item">
+        <label>Gorduras meta (g)</label>
+        <input type="number" id="macro-fat-goal" step="1" value="65">
+      </div>
+      <div class="setting-item">
+        <label>Carboidratos meta (g)</label>
+        <input type="number" id="macro-carbs-goal" step="1" value="200">
+      </div>
+      <div class="setting-item">
         <label>Notificações</label>
         <button class="btn-secondary" id="btn-enable-notifications">🔔 Ativar alarmes</button>
         <button class="btn-secondary" id="btn-test-notification" style="margin-top:6px;">🧪 Testar notificação</button>
@@ -316,6 +452,21 @@
     <div class="settings-section">
       <h3>📋 Resumo do Plano</h3>
       <div class="plan-summary" id="plan-summary"></div>
+    </div>
+
+    <div class="settings-section">
+      <h3>☁️ Sincronizar com GitHub</h3>
+      <div class="setting-item">
+        <label>Token GitHub</label>
+        <input type="password" id="github-token" placeholder="ghp_...">
+      </div>
+      <div class="setting-item">
+        <label>Repositório</label>
+        <input type="text" id="github-repo" placeholder="user/repo">
+      </div>
+      <button class="btn-primary btn-block" id="btn-github-sync" style="margin-top:6px;">☁️ Sincronizar dados</button>
+      <button class="btn-secondary btn-block" id="btn-github-restore" style="margin-top:6px;">📥 Restaurar dados</button>
+      <div id="github-status" style="font-size:11px;color:var(--text-muted);margin-top:6px;text-align:center;"></div>
     </div>
 
     <div class="settings-section">
@@ -341,6 +492,10 @@
   <button class="nav-btn" data-view="tarefas">
     <span class="nav-icon">📋</span>
     <span class="nav-label">Tarefas</span>
+  </button>
+  <button class="nav-btn" data-view="refeicoes">
+    <span class="nav-icon">🍽️</span>
+    <span class="nav-label">Refeições</span>
   </button>
   <button class="nav-btn" data-view="treinos">
     <span class="nav-icon">🏋️</span>
