@@ -95,11 +95,11 @@ jobs:
           mkdir -p app/src/main/res/layout
           mkdir -p app/src/main/res/xml
 
-          # === 2) Copiar arquivos do widget ===
+          # === 2) Copiar arquivos do widget (Java, não Kotlin — evitamos problemas de compilação) ===
           # NOTA: de app/android/, ../android-widget/ sobe para app/android-widget/
-          cp ../android-widget/java/com/jhona/organizacao/widget/RoutineWidgetProvider.kt \
+          cp ../android-widget/java/com/jhona/organizacao/widget/RoutineWidgetProvider.java \
              app/src/main/java/com/jhona/organizacao/widget/
-          cp ../android-widget/java/com/jhona/organizacao/plugin/WidgetDataBridge.kt \
+          cp ../android-widget/java/com/jhona/organizacao/plugin/WidgetDataBridge.java \
              app/src/main/java/com/jhona/organizacao/plugin/
           cp ../android-widget/res/layout/widget_layout.xml \
              app/src/main/res/layout/
