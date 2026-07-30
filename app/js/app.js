@@ -1886,22 +1886,32 @@
       date: getDayName(today)
     });
 
-    // Tenta salvar imediatamente, com retry caso o Capacitor ainda não esteja 100% pronto
+    // Usa @capacitor/filesystem para escrever um arquivo JSON
+    // O widget nativo lê desse mesmo arquivo — MÉTODO CONFIÁVEL
     function trySave(remainingTries) {
       try {
-        if (window.Capacitor?.Plugins?.Preferences) {
-          window.Capacitor.Plugins.Preferences.set({
-            key: 'widget_data',
-            value: data
+        if (window.Capacitor?.Plugins?.Filesystem) {
+          window.Capacitor.Plugins.Filesystem.writeFile({
+            directory: 'Documents',
+            path: 'widget_data.json',
+            data: data,
+            recursive: true
           }).then(() => {
-            console.log('✅ Widget data synced successfully');
+            console.log('✅ Widget data synced via Filesystem');
           }).catch(err => {
-            console.warn('Widget sync failed:', err);
+            console.warn('Widget sync via Filesystem failed:', err);
             if (remainingTries > 0) {
               setTimeout(() => trySave(remainingTries - 1), 1500);
             }
           });
           return true;
+        } else {
+          // Fallback: tenta Preferences (caso Filesystem não esteja disponível)
+          if (window.Capacitor?.Plugins?.Preferences) {
+            window.Capacitor.Plugins.Preferences.set({ key: 'widget_data', value: data })
+              .catch(() => {});
+            return true;
+          }
         }
       } catch (e) {
         console.warn('Widget sync error:', e);
@@ -1914,7 +1924,7 @@
       return false;
     }
 
-    trySave(10); // Tenta até 10 vezes com 1.5s de intervalo (~15s no total)
+    trySave(10);
   }
 
   function syncWidgetDataManual() {

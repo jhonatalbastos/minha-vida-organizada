@@ -54,7 +54,7 @@ jobs:
         run: |
           cd app
           npm init -y
-          npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/local-notifications @capacitor/preferences
+          npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/local-notifications @capacitor/preferences @capacitor/filesystem
 
       - name: 🏗️ Preparar arquivos do app
         run: |

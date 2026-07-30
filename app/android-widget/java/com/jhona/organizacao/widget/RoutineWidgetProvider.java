@@ -5,18 +5,19 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.widget.RemoteViews;
 
 import com.jhona.organizacao.R;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+
 public class RoutineWidgetProvider extends AppWidgetProvider {
 
-    // Nome do SharedPreferences usado pelo @capacitor/preferences
-    private static final String PREFS_NAME = "CapacitorPreferences";
-    private static final String PREFS_KEY = "widget_data";
     private static final int MAX_ITEMS = 5;
 
     @Override
@@ -39,12 +40,11 @@ public class RoutineWidgetProvider extends AppWidgetProvider {
         try {
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout_minimal);
 
-            // Lê dados do SharedPreferences (escritos pelo app via @capacitor/preferences)
-            SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-            String jsonString = prefs.getString(PREFS_KEY, "");
+            // Lê o arquivo JSON escrito pelo app via @capacitor/filesystem
+            String jsonString = readWidgetFile(context);
 
-            if (jsonString.isEmpty()) {
-                views.setTextViewText(R.id.widget_text, "📋 Minha Vida\nAbra o app para carregar");
+            if (jsonString == null || jsonString.isEmpty()) {
+                views.setTextViewText(R.id.widget_text, "📋 Minha Vida\nAbra o app e toque em 'Sincronizar widget'");
             } else {
                 try {
                     JSONObject data = new JSONObject(jsonString);
@@ -68,12 +68,14 @@ public class RoutineWidgetProvider extends AppWidgetProvider {
                               .append(" ").append(emoji).append(" ").append(activity)
                               .append("\n");
                         }
+                    } else {
+                        sb.append("🎉 Dia livre!");
                     }
 
                     views.setTextViewText(R.id.widget_text, sb.toString().trim());
 
                 } catch (Exception e) {
-                    views.setTextViewText(R.id.widget_text, "📋 Minha Vida\nDados carregados ✅");
+                    views.setTextViewText(R.id.widget_text, "📋 Minha Vida\nErro ao ler dados");
                 }
             }
 
@@ -91,6 +93,31 @@ public class RoutineWidgetProvider extends AppWidgetProvider {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Lê o arquivo widget_data.json do diretório Documents do app.
+     * Este arquivo é escrito pelo @capacitor/filesystem.
+     */
+    private String readWidgetFile(Context context) {
+        try {
+            File file = new File(context.getFilesDir(), "Documents/widget_data.json");
+            if (!file.exists()) return null;
+
+            FileInputStream fis = new FileInputStream(file);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            reader.close();
+            fis.close();
+            return sb.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }
