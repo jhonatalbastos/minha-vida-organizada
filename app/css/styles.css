@@ -1008,6 +1008,301 @@ html, body {
 #github-status.error { background: var(--danger-bg); color: var(--danger); }
 #github-status.success { background: var(--success-bg); color: var(--success); }
 
+/* ===== AUTH OVERLAY ===== */
+.auth-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.auth-modal {
+  background: var(--card);
+  border-radius: 16px;
+  max-width: 400px;
+  width: 100%;
+  padding: 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  position: relative;
+  animation: slideUp 0.3s ease;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.auth-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--text-muted);
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.15s;
+}
+.auth-close-btn:hover {
+  background: var(--border);
+  color: var(--text);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+.auth-logo { font-size: 40px; display: block; margin-bottom: 4px; }
+.auth-header h2 { font-size: 20px; font-weight: 700; margin: 4px 0; }
+.auth-subtitle { font-size: 13px; color: var(--text-muted); margin: 0; }
+
+.auth-tabs {
+  display: flex;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  margin-bottom: 16px;
+}
+.auth-tab {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.auth-tab.active {
+  background: var(--card);
+  color: var(--primary);
+  box-shadow: var(--shadow);
+}
+
+.auth-fields { display: flex; flex-direction: column; gap: 12px; }
+.auth-field { display: flex; flex-direction: column; gap: 4px; }
+.auth-field label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+.auth-field input {
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  background: var(--bg);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.auth-field input:focus {
+  border-color: var(--primary);
+}
+
+.auth-error {
+  background: #FEF2F2;
+  color: #DC2626;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  text-align: center;
+}
+
+.auth-btn-primary {
+  padding: 12px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.auth-btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+.auth-btn-primary:disabled { opacity: 0.6; cursor: default; transform: none; }
+
+.auth-btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: var(--card);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.auth-btn-google:hover {
+  background: var(--bg);
+  border-color: var(--text-muted);
+}
+.auth-btn-google:disabled { opacity: 0.6; cursor: default; }
+
+.auth-btn-logout {
+  padding: 10px;
+  background: transparent;
+  color: #DC2626;
+  border: 1.5px solid #DC2626;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  width: 100%;
+  margin-top: 12px;
+}
+.auth-btn-logout:hover {
+  background: #FEF2F2;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.auth-user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+}
+.auth-user-avatar {
+  font-size: 48px;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--primary-bg);
+  overflow: hidden;
+}
+.auth-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.auth-user-details {
+  text-align: center;
+}
+.auth-user-name {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+}
+.auth-user-email {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.auth-user-badge {
+  font-size: 12px;
+  color: #16A34A;
+  font-weight: 600;
+}
+
+/* ===== AUTH HEADER BUTTON ===== */
+.auth-header-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 50%;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.auth-header-btn:hover {
+  background: var(--border);
+}
+.auth-header-btn.logged-in:hover {
+  background: var(--primary-bg);
+}
+.auth-header-avatar-img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* ===== AUTH SETTINGS ===== */
+.auth-settings-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+}
+.auth-settings-avatar-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.auth-settings-info .auth-status-badge {
+  margin-left: auto;
+  font-size: 11px;
+  color: #16A34A;
+}
+
+/* ===== FIREBASE SYNC STATUS FLOATING ===== */
+.firebase-sync-status {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--card);
+  padding: 6px 14px;
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+  font-size: 11px;
+  color: var(--text-secondary);
+  z-index: 100;
+  transition: opacity 0.5s;
+  opacity: 0.7;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
 /* ===== SLEEP BARS ===== */
 .sleep-chart-section {
   background: var(--card);

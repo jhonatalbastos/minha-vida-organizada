@@ -2544,6 +2544,40 @@ remova e adicione o widget novamente.');
   window.showModal = showModal;
 
   // ==================================================================
+  // FIREBASE HOOKS (expose STATE and saveState for sync module)
+  // ==================================================================
+
+  // Expose STATE and saveState for Firebase sync module
+  window.__STATE = STATE;
+  window.__saveState = saveState;
+  window.__refreshUI = function() {
+    // Re-render all views
+    renderToday();
+    renderTasks();
+    renderShopping();
+    renderNotes();
+    renderCalistenia();
+    renderRunning();
+    renderAgenda();
+    renderProgress();
+    renderSettings();
+  };
+
+  // Setup force sync button
+  setTimeout(function() {
+    const btnForceSync = document.getElementById('btn-force-sync');
+    if (btnForceSync) {
+      btnForceSync.addEventListener('click', function() {
+        if (window.__syncNow) {
+          window.__syncNow();
+        } else if (window.__sync && window.__sync.syncNow) {
+          window.__sync.syncNow();
+        }
+      });
+    }
+  }, 1000);
+
+  // ==================================================================
   // START
   // ==================================================================
 
