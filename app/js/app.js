@@ -1616,6 +1616,10 @@
     document.getElementById('btn-test-notification').addEventListener('click', () => {
       sendTestNotification();
     });
+
+    document.getElementById('btn-sync-widget')?.addEventListener('click', () => {
+      syncWidgetDataManual();
+    });
   }
 
   function requestNotificationPermission() {
@@ -1882,20 +1886,45 @@
       date: getDayName(today)
     });
 
-    // Usa @capacitor/preferences para salvar os dados
-    // No Android, isso salva em SharedPreferences com nome "CapacitorPreferences"
-    try {
-      if (window.Capacitor?.Plugins?.Preferences) {
-        window.Capacitor.Plugins.Preferences.set({
-          key: 'widget_data',
-          value: data
-        }).catch(err => console.warn('Widget sync via Preferences failed:', err));
-      } else {
-        console.warn('Preferences plugin not available');
+    // Tenta salvar imediatamente, com retry caso o Capacitor ainda não esteja 100% pronto
+    function trySave(remainingTries) {
+      try {
+        if (window.Capacitor?.Plugins?.Preferences) {
+          window.Capacitor.Plugins.Preferences.set({
+            key: 'widget_data',
+            value: data
+          }).then(() => {
+            console.log('✅ Widget data synced successfully');
+          }).catch(err => {
+            console.warn('Widget sync failed:', err);
+            if (remainingTries > 0) {
+              setTimeout(() => trySave(remainingTries - 1), 1500);
+            }
+          });
+          return true;
+        }
+      } catch (e) {
+        console.warn('Widget sync error:', e);
       }
-    } catch (e) {
-      console.warn('Widget sync failed:', e);
+      if (remainingTries > 0) {
+        setTimeout(() => trySave(remainingTries - 1), 1500);
+      } else {
+        console.warn('Widget sync: giving up after retries');
+      }
+      return false;
     }
+
+    trySave(10); // Tenta até 10 vezes com 1.5s de intervalo (~15s no total)
+  }
+
+  function syncWidgetDataManual() {
+    // Versão chamada pelo botão manual — com feedback visual
+    if (!window.Capacitor?.isNativePlatform?.()) {
+      showModal('📋 Widget', 'Widget só disponível no APK Android.');
+      return;
+    }
+    syncWidgetData();
+    showModal('📋 Widget', 'Sincronizando dados com o widget... Atualize a tela inicial para ver.');
   }
 
   // ==================================================================
