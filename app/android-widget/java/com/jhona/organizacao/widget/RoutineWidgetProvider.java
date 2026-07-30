@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.RemoteViews;
 
+import com.jhona.organizacao.R;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
