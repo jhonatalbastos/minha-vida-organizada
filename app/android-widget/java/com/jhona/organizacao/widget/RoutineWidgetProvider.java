@@ -16,23 +16,6 @@ public class RoutineWidgetProvider extends AppWidgetProvider {
 
     private static final String PREFS_NAME = "MinhaVidaWidget";
     private static final String PREFS_KEY = "widget_data";
-
-    private static final int[] ITEM_VIEWS = {
-        R.id.item_1, R.id.item_2, R.id.item_3, R.id.item_4, R.id.item_5
-    };
-    private static final int[] ITEM_CHECKS = {
-        R.id.item_1_check, R.id.item_2_check, R.id.item_3_check,
-        R.id.item_4_check, R.id.item_5_check
-    };
-    private static final int[] ITEM_TIMES = {
-        R.id.item_1_time, R.id.item_2_time, R.id.item_3_time,
-        R.id.item_4_time, R.id.item_5_time
-    };
-    private static final int[] ITEM_TEXTS = {
-        R.id.item_1_text, R.id.item_2_text, R.id.item_3_text,
-        R.id.item_4_text, R.id.item_5_text
-    };
-
     private static final int MAX_ITEMS = 5;
 
     @Override
@@ -52,68 +35,117 @@ public class RoutineWidgetProvider extends AppWidgetProvider {
     }
 
     private void updateWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
-
-        // Read data from SharedPreferences (written by the web app)
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        String jsonString = prefs.getString(PREFS_KEY, "{}");
-
         try {
-            JSONObject data = new JSONObject(jsonString);
-            JSONArray items = data.optJSONArray("items");
-            String progress = data.optString("progress", "0%");
-            String dateLabel = data.optString("date", "");
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
 
-            // Update progress header
-            views.setTextViewText(R.id.widget_progress, progress + " " + dateLabel);
+            // Read data from SharedPreferences (written by the web app)
+            SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            String jsonString = prefs.getString(PREFS_KEY, "{}");
 
-            if (items != null && items.length() > 0) {
-                // Hide empty state
-                views.setViewVisibility(R.id.widget_empty, android.view.View.GONE);
+            try {
+                JSONObject data = new JSONObject(jsonString);
+                JSONArray items = data.optJSONArray("items");
+                String progress = data.optString("progress", "0%");
+                String dateLabel = data.optString("date", "");
 
-                int count = Math.min(items.length(), MAX_ITEMS);
-                for (int i = 0; i < count; i++) {
-                    JSONObject item = items.getJSONObject(i);
+                // Update progress header
+                views.setTextViewText(R.id.widget_progress, progress + " " + dateLabel);
 
-                    views.setViewVisibility(ITEM_VIEWS[i], android.view.View.VISIBLE);
+                if (items != null && items.length() > 0) {
+                    views.setViewVisibility(R.id.widget_empty, android.view.View.GONE);
 
-                    boolean isDone = item.optBoolean("done", false);
-                    views.setTextViewText(ITEM_CHECKS[i], isDone ? "✅" : "⏳");
-                    views.setTextViewText(ITEM_TIMES[i], item.optString("time", ""));
+                    int count = Math.min(items.length(), MAX_ITEMS);
+                    for (int i = 0; i < count; i++) {
+                        JSONObject item = items.getJSONObject(i);
 
-                    String emoji = item.optString("emoji", "");
-                    String activity = item.optString("activity", "");
-                    views.setTextViewText(ITEM_TEXTS[i], emoji + " " + activity);
+                        views.setViewVisibility(getItemViewId(i), android.view.View.VISIBLE);
+
+                        boolean isDone = item.optBoolean("done", false);
+                        views.setTextViewText(getItemCheckId(i), isDone ? "✅" : "⏳");
+                        views.setTextViewText(getItemTimeId(i), item.optString("time", ""));
+
+                        String emoji = item.optString("emoji", "");
+                        String activity = item.optString("activity", "");
+                        views.setTextViewText(getItemTextId(i), emoji + " " + activity);
+                    }
+
+                    for (int i = count; i < MAX_ITEMS; i++) {
+                        views.setViewVisibility(getItemViewId(i), android.view.View.GONE);
+                    }
+                } else {
+                    views.setViewVisibility(R.id.widget_empty, android.view.View.VISIBLE);
+                    for (int i = 0; i < MAX_ITEMS; i++) {
+                        views.setViewVisibility(getItemViewId(i), android.view.View.GONE);
+                    }
                 }
-
-                // Hide remaining unused slots
-                for (int i = count; i < MAX_ITEMS; i++) {
-                    views.setViewVisibility(ITEM_VIEWS[i], android.view.View.GONE);
-                }
-            } else {
+            } catch (Exception e) {
                 views.setViewVisibility(R.id.widget_empty, android.view.View.VISIBLE);
+                views.setTextViewText(R.id.widget_empty, "📋 Abra o app para carregar");
                 for (int i = 0; i < MAX_ITEMS; i++) {
-                    views.setViewVisibility(ITEM_VIEWS[i], android.view.View.GONE);
+                    views.setViewVisibility(getItemViewId(i), android.view.View.GONE);
                 }
             }
-        } catch (Exception e) {
-            views.setViewVisibility(R.id.widget_empty, android.view.View.VISIBLE);
-            views.setTextViewText(R.id.widget_empty, "📋 Abra o app para carregar");
-            for (int i = 0; i < MAX_ITEMS; i++) {
-                views.setViewVisibility(ITEM_VIEWS[i], android.view.View.GONE);
+
+            // Click handler: open the app when tapping the footer
+            Intent intent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
+            if (intent != null) {
+                PendingIntent pendingIntent = PendingIntent.getActivity(
+                    context, 0, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+                );
+                views.setOnClickPendingIntent(R.id.widget_footer, pendingIntent);
             }
-        }
 
-        // Click handler: open the app when tapping the footer
-        Intent intent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
-        if (intent != null) {
-            PendingIntent pendingIntent = PendingIntent.getActivity(
-                context, 0, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-            );
-            views.setOnClickPendingIntent(R.id.widget_footer, pendingIntent);
-        }
+            appWidgetManager.updateAppWidget(appWidgetId, views);
 
-        appWidgetManager.updateAppWidget(appWidgetId, views);
+        } catch (Exception e) {
+            // Se tudo falhar, pelo menos não crasha o widget
+            e.printStackTrace();
+        }
+    }
+
+    // Métodos seguros — evitam inicialização estática com R.id.*
+    private int getItemViewId(int index) {
+        switch (index) {
+            case 0:  return R.id.item_1;
+            case 1:  return R.id.item_2;
+            case 2:  return R.id.item_3;
+            case 3:  return R.id.item_4;
+            case 4:  return R.id.item_5;
+            default: return R.id.item_1;
+        }
+    }
+
+    private int getItemCheckId(int index) {
+        switch (index) {
+            case 0:  return R.id.item_1_check;
+            case 1:  return R.id.item_2_check;
+            case 2:  return R.id.item_3_check;
+            case 3:  return R.id.item_4_check;
+            case 4:  return R.id.item_5_check;
+            default: return R.id.item_1_check;
+        }
+    }
+
+    private int getItemTimeId(int index) {
+        switch (index) {
+            case 0:  return R.id.item_1_time;
+            case 1:  return R.id.item_2_time;
+            case 2:  return R.id.item_3_time;
+            case 3:  return R.id.item_4_time;
+            case 4:  return R.id.item_5_time;
+            default: return R.id.item_1_time;
+        }
+    }
+
+    private int getItemTextId(int index) {
+        switch (index) {
+            case 0:  return R.id.item_1_text;
+            case 1:  return R.id.item_2_text;
+            case 2:  return R.id.item_3_text;
+            case 3:  return R.id.item_4_text;
+            case 4:  return R.id.item_5_text;
+            default: return R.id.item_1_text;
+        }
     }
 }
