@@ -1858,22 +1858,22 @@
 
   function syncWidgetData() {
     // Só funciona no Android nativo via Capacitor
-    if (!window.Capacitor?.Plugins?.WidgetDataBridge) return;
+    if (!window.Capacitor?.isNativePlatform?.()) return;
 
     const today = new Date();
     const schedule = getScheduleForDay(today);
-    const dateKey = getDateKey();
+    const todayKey = getDateKey();
 
     const items = schedule.map(item => ({
       id: item.id,
       emoji: item.emoji,
       activity: item.activity,
       time: item.time,
-      done: isItemDone('scheduleDone', item.id, dateKey)
+      done: isItemDone('scheduleDone', item.id, todayKey)
     }));
 
     const ids = schedule.map(s => s.id);
-    const done = ids.filter(id => isItemDone('scheduleDone', id, dateKey));
+    const done = ids.filter(id => isItemDone('scheduleDone', id, todayKey));
     const pct = ids.length > 0 ? Math.round((done.length / ids.length) * 100) : 0;
 
     const data = JSON.stringify({
@@ -1882,9 +1882,17 @@
       date: getDayName(today)
     });
 
+    // Usa @capacitor/preferences para salvar os dados
+    // No Android, isso salva em SharedPreferences com nome "CapacitorPreferences"
     try {
-      window.Capacitor.Plugins.WidgetDataBridge.syncWidgetData({ data: data })
-        .catch(err => console.warn('Widget sync failed:', err));
+      if (window.Capacitor?.Plugins?.Preferences) {
+        Capacitor.Plugins.Preferences.set({
+          key: 'widget_data',
+          value: data
+        }).catch(err => console.warn('Widget sync via Preferences failed:', err));
+      } else {
+        console.warn('Preferences plugin not available');
+      }
     } catch (e) {
       console.warn('Widget sync failed:', e);
     }

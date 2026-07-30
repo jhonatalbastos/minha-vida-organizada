@@ -99,23 +99,19 @@ jobs:
           # NOTA: de app/android/, ../android-widget/ sobe para app/android-widget/
           cp ../android-widget/java/com/jhona/organizacao/widget/RoutineWidgetProvider.java \
              app/src/main/java/com/jhona/organizacao/widget/
-          cp ../android-widget/java/com/jhona/organizacao/plugin/WidgetDataBridge.java \
-             app/src/main/java/com/jhona/organizacao/plugin/
           cp ../android-widget/res/layout/widget_layout_minimal.xml \
              app/src/main/res/layout/
           cp ../android-widget/res/xml/appwidget_provider_info.xml \
              app/src/main/res/xml/
 
-          # === 2b) Criar regra ProGuard para não remover as classes do widget ===
+          # === 2b) Regra ProGuard para não remover a classe do widget ===
           echo "-keep class com.jhona.organizacao.widget.** { *; }" >> app/proguard-rules.pro
-          echo "-keep class com.jhona.organizacao.plugin.** { *; }" >> app/proguard-rules.pro
           echo "✅ Regras ProGuard adicionadas"
 
           echo "✅ Arquivos do widget copiados"
 
           # === 3) Registrar widget no AndroidManifest.xml ===
           MANIFEST="app/src/main/AndroidManifest.xml"
-          # Adicionar receiver do widget ANTES da tag </application>
           node -e "
           const fs = require('fs');
           let m = fs.readFileSync('$MANIFEST', 'utf8');
@@ -133,53 +129,6 @@ jobs:
           fs.writeFileSync('$MANIFEST', m);
           "
           echo "✅ Widget registrado no AndroidManifest.xml"
-
-          # === 4) Registrar plugin na MainActivity ===
-          MAIN_ACTIVITY="app/src/main/java/com/jhona/organizacao/MainActivity.java"
-          if [ -f "$MAIN_ACTIVITY" ]; then
-            node -e "
-            const fs = require('fs');
-            let ma = fs.readFileSync('$MAIN_ACTIVITY', 'utf8');
-            // Add import for our plugin if not present
-            if (!ma.includes('WidgetDataBridge')) {
-              ma = ma.replace(
-                'import com.getcapacitor.BridgeActivity;',
-                'import com.getcapacitor.BridgeActivity;\nimport com.jhona.organizacao.plugin.WidgetDataBridge;'
-              );
-              // Register plugin in onCreate
-              ma = ma.replace(
-                'super.onCreate(savedInstanceState);',
-                'super.onCreate(savedInstanceState);\n        registerPlugin(WidgetDataBridge.class);'
-              );
-              fs.writeFileSync('$MAIN_ACTIVITY', ma);
-              console.log('Plugin registrado na MainActivity');
-            } else {
-              console.log('Plugin já registrado');
-            }
-            "
-          else
-            echo "⚠️ MainActivity.java não encontrado, tentando Kotlin..."
-            MAIN_ACTIVITY="app/src/main/java/com/jhona/organizacao/MainActivity.kt"
-            if [ -f "$MAIN_ACTIVITY" ]; then
-              node -e "
-              const fs = require('fs');
-              let ma = fs.readFileSync('$MAIN_ACTIVITY', 'utf8');
-              if (!ma.includes('WidgetDataBridge')) {
-                ma = ma.replace(
-                  'import com.getcapacitor.BridgeActivity',
-                  'import com.getcapacitor.BridgeActivity\nimport com.jhona.organizacao.plugin.WidgetDataBridge'
-                );
-                ma = ma.replace(
-                  'super.onCreate(savedInstanceState)',
-                  'super.onCreate(savedInstanceState)\n        registerPlugin(WidgetDataBridge::class.java)'
-                );
-                fs.writeFileSync('$MAIN_ACTIVITY', ma);
-                console.log('Plugin registrado na MainActivity.kt');
-              }
-              "
-            fi
-          fi
-          echo "✅ Plugin registrado na MainActivity"
 
           echo "📱 Widget Android injetado com sucesso!"
 
