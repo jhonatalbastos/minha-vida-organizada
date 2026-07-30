@@ -95,16 +95,21 @@ jobs:
           mkdir -p app/src/main/res/layout
           mkdir -p app/src/main/res/xml
 
-          # === 2) Copiar arquivos do widget (Java, não Kotlin — evitamos problemas de compilação) ===
+          # === 2) Copiar arquivos do widget ===
           # NOTA: de app/android/, ../android-widget/ sobe para app/android-widget/
           cp ../android-widget/java/com/jhona/organizacao/widget/RoutineWidgetProvider.java \
              app/src/main/java/com/jhona/organizacao/widget/
           cp ../android-widget/java/com/jhona/organizacao/plugin/WidgetDataBridge.java \
              app/src/main/java/com/jhona/organizacao/plugin/
-          cp ../android-widget/res/layout/widget_layout.xml \
+          cp ../android-widget/res/layout/widget_layout_minimal.xml \
              app/src/main/res/layout/
           cp ../android-widget/res/xml/appwidget_provider_info.xml \
              app/src/main/res/xml/
+
+          # === 2b) Criar regra ProGuard para não remover as classes do widget ===
+          echo "-keep class com.jhona.organizacao.widget.** { *; }" >> app/proguard-rules.pro
+          echo "-keep class com.jhona.organizacao.plugin.** { *; }" >> app/proguard-rules.pro
+          echo "✅ Regras ProGuard adicionadas"
 
           echo "✅ Arquivos do widget copiados"
 
