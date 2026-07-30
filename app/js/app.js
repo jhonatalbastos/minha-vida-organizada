@@ -1611,17 +1611,42 @@
   }
 
   function requestNotificationPermission() {
+    // === TRY 1: Capacitor native permissions (APK / Android WebView) ===
+    if (window.Capacitor?.Plugins?.LocalNotifications?.requestPermissions) {
+      Capacitor.Plugins.LocalNotifications.requestPermissions()
+        .then(result => {
+          if (result.granted) {
+            showModal('🔔 Notificações ativadas!', 'Você receberá alarmes nos horários da sua rotina.');
+            scheduleAlarms();
+          } else {
+            showModal('🔔', 'Permissão negada. Ative nas configurações do aplicativo.');
+          }
+        })
+        .catch(() => browserNotificationRequest());
+      return;
+    }
+
+    // === TRY 2: Browser Notification API ===
+    browserNotificationRequest();
+  }
+
+  function browserNotificationRequest() {
     if (!('Notification' in window)) {
-      showModal('🔔', 'Notificações não suportadas neste navegador.');
+      showModal('🔔', 'Notificações não são suportadas neste ambiente. ' +
+        'Dicas: use HTTPS ou localhost, ou se estiver no APK reinstale com permissões de notificação.');
       return;
     }
     Notification.requestPermission().then(perm => {
       if (perm === 'granted') {
         showModal('🔔 Notificações ativadas!', 'Você receberá alarmes nos horários da sua rotina.');
         scheduleAlarms();
+      } else if (perm === 'denied') {
+        showModal('🔔', 'Permissão negada. Ative manualmente nas configurações do navegador/sistema.');
       } else {
-        showModal('🔔', 'Permissão negada. Ative nas configurações do navegador.');
+        showModal('🔔', 'Permissão ignorada. Clique no 🔔 novamente para tentar.');
       }
+    }).catch(() => {
+      showModal('🔔', 'Erro ao solicitar permissão. Se estiver no APK, verifique as permissões do app.');
     });
   }
 
