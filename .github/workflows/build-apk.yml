@@ -96,13 +96,14 @@ jobs:
           mkdir -p app/src/main/res/xml
 
           # === 2) Copiar arquivos do widget ===
-          cp ../../android-widget/java/com/jhona/organizacao/widget/RoutineWidgetProvider.kt \
+          # NOTA: de app/android/, ../android-widget/ sobe para app/android-widget/
+          cp ../android-widget/java/com/jhona/organizacao/widget/RoutineWidgetProvider.kt \
              app/src/main/java/com/jhona/organizacao/widget/
-          cp ../../android-widget/java/com/jhona/organizacao/plugin/WidgetDataBridge.kt \
+          cp ../android-widget/java/com/jhona/organizacao/plugin/WidgetDataBridge.kt \
              app/src/main/java/com/jhona/organizacao/plugin/
-          cp ../../android-widget/res/layout/widget_layout.xml \
+          cp ../android-widget/res/layout/widget_layout.xml \
              app/src/main/res/layout/
-          cp ../../android-widget/res/xml/appwidget_provider_info.xml \
+          cp ../android-widget/res/xml/appwidget_provider_info.xml \
              app/src/main/res/xml/
 
           echo "✅ Arquivos do widget copiados"

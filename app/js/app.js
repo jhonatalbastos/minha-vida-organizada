@@ -1883,7 +1883,7 @@
     });
 
     try {
-      Capacitor.Plugins.WidgetDataBridge.syncWidgetData({ data: data })
+      window.Capacitor.Plugins.WidgetDataBridge.syncWidgetData({ data: data })
         .catch(err => console.warn('Widget sync failed:', err));
     } catch (e) {
       console.warn('Widget sync failed:', e);
