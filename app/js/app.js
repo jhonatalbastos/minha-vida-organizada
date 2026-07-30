@@ -1886,7 +1886,7 @@
     // No Android, isso salva em SharedPreferences com nome "CapacitorPreferences"
     try {
       if (window.Capacitor?.Plugins?.Preferences) {
-        Capacitor.Plugins.Preferences.set({
+        window.Capacitor.Plugins.Preferences.set({
           key: 'widget_data',
           value: data
         }).catch(err => console.warn('Widget sync via Preferences failed:', err));
