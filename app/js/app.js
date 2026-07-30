@@ -302,11 +302,13 @@
     // Service Worker + alarm scheduling
     registerSW();
     scheduleAlarms();
+    syncWidgetData();
 
     // Auto-update every minute
     setInterval(() => {
       updateScheduleHighlight();
       updateProgressRing();
+      syncWidgetData();
     }, 60000);
   }
 
@@ -592,6 +594,7 @@
       toggleItemDone('scheduleDone', id, STATE.currentDate);
       renderSchedule();
       updateProgressRing();
+      syncWidgetData();
     };
 
     updateScheduleHighlight();
@@ -775,6 +778,7 @@
           renderSchedule();
           updateProgressRing();
           renderDailyLog();
+          syncWidgetData();
           showModal('🎉', 'Dia concluído! Continue assim! 💪');
         }
       );
@@ -1608,6 +1612,10 @@
     document.getElementById('btn-enable-notifications').addEventListener('click', () => {
       requestNotificationPermission();
     });
+
+    document.getElementById('btn-test-notification').addEventListener('click', () => {
+      sendTestNotification();
+    });
   }
 
   function requestNotificationPermission() {
@@ -1650,6 +1658,75 @@
     }).catch(() => {
       showModal('🔔', 'Erro ao solicitar permissão. Se estiver no APK, verifique as permissões do app.');
     });
+  }
+
+  function sendTestNotification() {
+    // Verifica permissão primeiro
+    if (!('Notification' in window) && !window.Capacitor?.Plugins?.LocalNotifications) {
+      showModal('🔔', 'Notificações não suportadas neste ambiente.');
+      return;
+    }
+
+    if (('Notification' in window) && Notification.permission !== 'granted') {
+      showModal('🔔', 'Permissão de notificação não concedida. Ative primeiro clicando em "🔔 Ativar alarmes".');
+      return;
+    }
+
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+    // === TRY 1: Capacitor native (APK) ===
+    if (window.Capacitor?.Plugins?.LocalNotifications && Capacitor.isNativePlatform?.()) {
+      try {
+        Capacitor.Plugins.LocalNotifications.schedule({
+          notifications: [{
+            id: 99999,
+            title: '🧪 Teste de notificação',
+            body: 'Hora: ' + timeStr + ' — Se você está vendo isso, as notificações estão funcionando! ✅',
+            schedule: { at: new Date(Date.now() + 1000) },
+            sound: 'default',
+            smallIcon: 'ic_stat_icon'
+          }]
+        });
+        showModal('✅', 'Notificação de teste enviada! Verifique a barra de notificações.');
+        return;
+      } catch (e) {
+        console.warn('Test notification failed via Capacitor:', e);
+      }
+    }
+
+    // === TRY 2: Service Worker (browser) ===
+    if (navigator.serviceWorker?.controller) {
+      navigator.serviceWorker.controller.postMessage({
+        type: 'SCHEDULE_NOTIFICATIONS',
+        notifications: [{
+          id: 'test',
+          title: '🧪 Teste de notificação',
+          body: 'Hora: ' + timeStr + ' — Notificações funcionando! ✅',
+          time: Date.now() + 2000,
+          action: 'test'
+        }]
+      });
+      showModal('✅', 'Notificação de teste enviada! Verifique a barra de notificações.');
+      return;
+    }
+
+    // === TRY 3: Direct browser notification (fallback) ===
+    if ('Notification' in window && Notification.permission === 'granted') {
+      try {
+        const n = new Notification('🧪 Teste de notificação', {
+          body: 'Hora: ' + timeStr + ' — Notificações funcionando! ✅',
+          icon: 'icons/icon-192.png'
+        });
+        setTimeout(() => n.close(), 5000);
+        showModal('✅', 'Notificação de teste enviada!');
+        return;
+      } catch (e) {
+        console.warn('Direct notification failed:', e);
+      }
+    }
+
+    showModal('🔔', 'Não foi possível enviar a notificação de teste. Ative as permissões primeiro.');
   }
 
   function scheduleAlarms() {
@@ -1772,6 +1849,44 @@
       navigator.setAppBadge(pending.length).catch(() => {});
     } else {
       navigator.clearAppBadge().catch(() => {});
+    }
+  }
+
+  // ==================================================================
+  // WIDGET DATA SYNC (Android homescreen widget)
+  // ==================================================================
+
+  function syncWidgetData() {
+    // Só funciona no Android nativo via Capacitor
+    if (!window.Capacitor?.Plugins?.WidgetDataBridge) return;
+
+    const today = new Date();
+    const schedule = getScheduleForDay(today);
+    const dateKey = getDateKey();
+
+    const items = schedule.map(item => ({
+      id: item.id,
+      emoji: item.emoji,
+      activity: item.activity,
+      time: item.time,
+      done: isItemDone('scheduleDone', item.id, dateKey)
+    }));
+
+    const ids = schedule.map(s => s.id);
+    const done = ids.filter(id => isItemDone('scheduleDone', id, dateKey));
+    const pct = ids.length > 0 ? Math.round((done.length / ids.length) * 100) : 0;
+
+    const data = JSON.stringify({
+      items: items,
+      progress: pct + '%',
+      date: getDayName(today)
+    });
+
+    try {
+      Capacitor.Plugins.WidgetDataBridge.syncWidgetData({ data: data })
+        .catch(err => console.warn('Widget sync failed:', err));
+    } catch (e) {
+      console.warn('Widget sync failed:', e);
     }
   }
 

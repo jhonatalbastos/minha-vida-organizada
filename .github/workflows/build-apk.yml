@@ -39,7 +39,6 @@ jobs:
           mkdir -p icons
           node -e "
           const fs = require('fs');
-          // PNG azul minimalista 1x1 (placeholder)
           const png = Buffer.from(
             'iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlAp8mAAAAA1BMVEX///+nxBvIAAAASElE' +
             'QVR4nO3BMQEAAADCoPVPbQwfoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' +
@@ -55,12 +54,11 @@ jobs:
         run: |
           cd app
           npm init -y
-          npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/local-notifications
+          npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/local-notifications @capacitor/preferences
 
       - name: 🏗️ Preparar arquivos do app
         run: |
           cd app
-          # Cria pasta www com todos os arquivos do app
           mkdir -p www
           cp -r index.html manifest.json sw.js css js icons www/
 
@@ -74,10 +72,7 @@ jobs:
       - name: 🔧 Corrigir conflito de versões do Kotlin
         run: |
           cd app/android
-          # 1) Forçar versão única do Kotlin no projeto
           sed -i 's/kotlin_version = .*/kotlin_version = "1.8.22"/' build.gradle
-          
-          # 2) Excluir módulos legados jdk7/jdk8 via Node.js (multiline seguro)
           node -e "
           const fs = require('fs');
           let c = fs.readFileSync('app/build.gradle', 'utf8');
@@ -89,6 +84,98 @@ jobs:
           fs.writeFileSync('app/build.gradle', c);
           "
           echo "✅ Conflito de dependências do Kotlin resolvido"
+
+      - name: 📱 Injetar Widget Android
+        run: |
+          cd app/android
+
+          # === 1) Criar diretórios necessários ===
+          mkdir -p app/src/main/java/com/jhona/organizacao/widget
+          mkdir -p app/src/main/java/com/jhona/organizacao/plugin
+          mkdir -p app/src/main/res/layout
+          mkdir -p app/src/main/res/xml
+
+          # === 2) Copiar arquivos do widget ===
+          cp ../../android-widget/java/com/jhona/organizacao/widget/RoutineWidgetProvider.kt \
+             app/src/main/java/com/jhona/organizacao/widget/
+          cp ../../android-widget/java/com/jhona/organizacao/plugin/WidgetDataBridge.kt \
+             app/src/main/java/com/jhona/organizacao/plugin/
+          cp ../../android-widget/res/layout/widget_layout.xml \
+             app/src/main/res/layout/
+          cp ../../android-widget/res/xml/appwidget_provider_info.xml \
+             app/src/main/res/xml/
+
+          echo "✅ Arquivos do widget copiados"
+
+          # === 3) Registrar widget no AndroidManifest.xml ===
+          MANIFEST="app/src/main/AndroidManifest.xml"
+          # Adicionar receiver do widget ANTES da tag </application>
+          node -e "
+          const fs = require('fs');
+          let m = fs.readFileSync('$MANIFEST', 'utf8');
+          const widgetReceiver = '    <!-- Widget da rotina diária -->\n' +
+            '    <receiver android:name=\"com.jhona.organizacao.widget.RoutineWidgetProvider\"\n' +
+            '        android:exported=\"false\">\n' +
+            '        <intent-filter>\n' +
+            '            <action android:name=\"android.appwidget.action.APPWIDGET_UPDATE\" />\n' +
+            '        </intent-filter>\n' +
+            '        <meta-data\n' +
+            '            android:name=\"android.appwidget.provider\"\n' +
+            '            android:resource=\"@xml/appwidget_provider_info\" />\n' +
+            '    </receiver>\n';
+          m = m.replace('</application>', widgetReceiver + '</application>');
+          fs.writeFileSync('$MANIFEST', m);
+          "
+          echo "✅ Widget registrado no AndroidManifest.xml"
+
+          # === 4) Registrar plugin na MainActivity ===
+          MAIN_ACTIVITY="app/src/main/java/com/jhona/organizacao/MainActivity.java"
+          if [ -f "$MAIN_ACTIVITY" ]; then
+            node -e "
+            const fs = require('fs');
+            let ma = fs.readFileSync('$MAIN_ACTIVITY', 'utf8');
+            // Add import for our plugin if not present
+            if (!ma.includes('WidgetDataBridge')) {
+              ma = ma.replace(
+                'import com.getcapacitor.BridgeActivity;',
+                'import com.getcapacitor.BridgeActivity;\nimport com.jhona.organizacao.plugin.WidgetDataBridge;'
+              );
+              // Register plugin in onCreate
+              ma = ma.replace(
+                'super.onCreate(savedInstanceState);',
+                'super.onCreate(savedInstanceState);\n        registerPlugin(WidgetDataBridge.class);'
+              );
+              fs.writeFileSync('$MAIN_ACTIVITY', ma);
+              console.log('Plugin registrado na MainActivity');
+            } else {
+              console.log('Plugin já registrado');
+            }
+            "
+          else
+            echo "⚠️ MainActivity.java não encontrado, tentando Kotlin..."
+            MAIN_ACTIVITY="app/src/main/java/com/jhona/organizacao/MainActivity.kt"
+            if [ -f "$MAIN_ACTIVITY" ]; then
+              node -e "
+              const fs = require('fs');
+              let ma = fs.readFileSync('$MAIN_ACTIVITY', 'utf8');
+              if (!ma.includes('WidgetDataBridge')) {
+                ma = ma.replace(
+                  'import com.getcapacitor.BridgeActivity',
+                  'import com.getcapacitor.BridgeActivity\nimport com.jhona.organizacao.plugin.WidgetDataBridge'
+                );
+                ma = ma.replace(
+                  'super.onCreate(savedInstanceState)',
+                  'super.onCreate(savedInstanceState)\n        registerPlugin(WidgetDataBridge::class.java)'
+                );
+                fs.writeFileSync('$MAIN_ACTIVITY', ma);
+                console.log('Plugin registrado na MainActivity.kt');
+              }
+              "
+            fi
+          fi
+          echo "✅ Plugin registrado na MainActivity"
+
+          echo "📱 Widget Android injetado com sucesso!"
 
       - name: 🧹 Limpar cache do Gradle
         run: |
@@ -116,7 +203,6 @@ jobs:
           
           APK_DIR="app/build/outputs/apk/release"
           if [ -f "$APK_DIR/app-release-unsigned.apk" ]; then
-            # Encontrar apksigner
             BUILD_TOOLS=$(ls -d $ANDROID_SDK_ROOT/build-tools/*/ 2>/dev/null | tail -1)
             APKSIGNER="${BUILD_TOOLS}apksigner"
             [ ! -f "$APKSIGNER" ] && APKSIGNER=$(which apksigner 2>/dev/null || echo "")
