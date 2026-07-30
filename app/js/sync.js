@@ -1,16 +1,24 @@
 /* ===================================================================
    Firebase Sync — Minha Vida Organizada
+   ⚠️ MUST be failsafe — app works even if Firebase is unavailable
    Sincroniza o STATE com Firestore quando usuário está logado
    =================================================================== */
 
 ;(function() {
   'use strict';
 
-  const auth = window.__firebaseAuth;
-  const db = window.__firebaseDb;
+  var auth = window.__firebaseAuth;
+  var db = window.__firebaseDb;
+  var firebaseAvailable = !!(auth && db && typeof firebase !== 'undefined');
 
-  if (!auth || !db) {
-    console.warn('Firebase Sync: Firebase não inicializado');
+  if (!firebaseAvailable) {
+    console.warn('Firebase Sync: Firebase não disponível — sync desativado');
+    // Still expose __syncNow as a no-op so the button doesn't crash
+    window.__syncNow = function() {
+      var el = document.getElementById('firebase-sync-status');
+      if (el) el.textContent = '⛔ Firebase indisponível';
+    };
+    window.__sync = { init: function(){}, syncNow: function(){}, getUserStateRef: function(){return null;} };
     return;
   }
 
@@ -18,12 +26,12 @@
   // CONFIG
   // ==================================================================
 
-  const SYNC_DEBOUNCE_MS = 2000; // 2 segundos após última alteração
-  let syncTimeout = null;
-  let isSyncing = false;
-  let lastSyncTime = 0;
-  let unsubscribeSnapshot = null;
-  let isRestoring = false;
+  var SYNC_DEBOUNCE_MS = 2000;
+  var syncTimeout = null;
+  var isSyncing = false;
+  var lastSyncTime = 0;
+  var unsubscribeSnapshot = null;
+  var isRestoring = false;
 
   // ==================================================================
   // GET FIRESTORE REF
@@ -39,15 +47,14 @@
   // ==================================================================
 
   function syncToFirebase(state) {
-    const user = auth.currentUser;
+    var user = auth.currentUser;
     if (!user || !state) return Promise.resolve();
 
-    const ref = getUserStateRef(user);
+    var ref = getUserStateRef(user);
     if (!ref) return Promise.resolve();
 
-    // Add sync metadata
-    const dataToSync = {
-      state: JSON.parse(JSON.stringify(state)), // deep clone
+    var dataToSync = {
+      state: JSON.parse(JSON.stringify(state)),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       updatedBy: user.uid
     };
@@ -74,7 +81,7 @@
   function loadFromFirebase(user) {
     if (!user) return Promise.resolve(null);
 
-    const ref = getUserStateRef(user);
+    var ref = getUserStateRef(user);
     if (!ref) return Promise.resolve(null);
 
     updateSyncStatus('📥 Baixando dados...');
@@ -97,7 +104,6 @@
   // ==================================================================
 
   function setupRealtimeListener(user) {
-    // Remove listener anterior
     if (unsubscribeSnapshot) {
       unsubscribeSnapshot();
       unsubscribeSnapshot = null;
@@ -105,35 +111,23 @@
 
     if (!user) return;
 
-    const ref = getUserStateRef(user);
+    var ref = getUserStateRef(user);
     if (!ref) return;
 
     unsubscribeSnapshot = ref.onSnapshot(function(doc) {
-      // Não processar se estamos no meio de um sync
       if (isSyncing || isRestoring) return;
-
-      // Não processar se o sync foi feito por este dispositivo há menos de 5s
       if (Date.now() - lastSyncTime < 5000) return;
 
       if (doc.exists && doc.data() && doc.data().state) {
-        const remoteData = doc.data().state;
-        const localState = window.__STATE;
+        var remoteData = doc.data().state;
+        var localState = window.__STATE;
 
         if (localState) {
-          // Merge: preservar dados locais não salvos no servidor
-          const merged = mergeStates(localState, remoteData);
-          // Atualizar estado local
+          var merged = mergeStates(localState, remoteData);
           Object.assign(localState, merged);
 
-          // Salvar no localStorage
-          if (window.__saveState) {
-            window.__saveState();
-          }
-
-          // Re-renderizar views
-          if (window.__refreshUI) {
-            window.__refreshUI();
-          }
+          if (window.__saveState) window.__saveState();
+          if (window.__refreshUI) window.__refreshUI();
 
           updateSyncStatus('🔄 Atualizado de outro dispositivo');
         }
@@ -148,15 +142,9 @@
   // ==================================================================
 
   function mergeStates(local, remote) {
-    // Regras de merge:
-    // - Dados diários (dailyLog, waterLog, scheduleDone, etc.): merge por data
-    // - Dados de configuração (macroGoals, refeicoes, etc.): remote wins (mais recente)
-    // - Medições, treinos, notas: concatena e deduplica
+    var merged = JSON.parse(JSON.stringify(remote));
 
-    const merged = JSON.parse(JSON.stringify(remote));
-
-    // Para dados diários, fazer merge chave a chave (preserva registros locais que não existem no remote)
-    const dailyKeys = ['dailyLog', 'waterLog', 'scheduleDone', 'tasksDone', 'shoppingDone', 'mealConsumed'];
+    var dailyKeys = ['dailyLog', 'waterLog', 'scheduleDone', 'tasksDone', 'shoppingDone', 'mealConsumed'];
     dailyKeys.forEach(function(key) {
       if (!merged[key]) merged[key] = {};
       if (local[key]) {
@@ -168,13 +156,12 @@
       }
     });
 
-    // Medições: concatena e deduplica por timestamp
     if (local.measurements && local.measurements.length > 0) {
-      const existingIds = new Set((merged.measurements || []).map(function(m) {
+      var existingIds = new Set((merged.measurements || []).map(function(m) {
         return m.date || m.timestamp || JSON.stringify(m);
       }));
       local.measurements.forEach(function(m) {
-        const id = m.date || m.timestamp || JSON.stringify(m);
+        var id = m.date || m.timestamp || JSON.stringify(m);
         if (!existingIds.has(id)) {
           if (!merged.measurements) merged.measurements = [];
           merged.measurements.push(m);
@@ -191,10 +178,7 @@
   // ==================================================================
 
   function debouncedSync(state) {
-    if (syncTimeout) {
-      clearTimeout(syncTimeout);
-    }
-
+    if (syncTimeout) clearTimeout(syncTimeout);
     syncTimeout = setTimeout(function() {
       syncToFirebase(state);
       syncTimeout = null;
@@ -206,13 +190,11 @@
   // ==================================================================
 
   function updateSyncStatus(msg) {
-    const el = document.getElementById('firebase-sync-status');
+    var el = document.getElementById('firebase-sync-status');
     if (el) {
       el.textContent = msg;
       el.style.opacity = '1';
-      setTimeout(function() {
-        el.style.opacity = '0.6';
-      }, 3000);
+      setTimeout(function() { el.style.opacity = '0.6'; }, 3000);
     }
   }
 
@@ -221,55 +203,35 @@
   // ==================================================================
 
   function onAuthChanged(event) {
-    const user = event.detail.user;
-    const loggedIn = event.detail.loggedIn;
+    var user = event.detail.user;
+    var loggedIn = event.detail.loggedIn;
 
     if (loggedIn && user) {
-      // Logged in: load data from Firestore
       isRestoring = true;
       loadFromFirebase(user)
         .then(function(remoteState) {
           if (remoteState && window.__STATE) {
-            const merged = mergeStates(window.__STATE, remoteState);
+            var merged = mergeStates(window.__STATE, remoteState);
             Object.assign(window.__STATE, merged);
-
-            // Salvar local
-            if (window.__saveState) {
-              window.__saveState();
-            }
-
-            // Recarregar UI
-            if (window.__refreshUI) {
-              window.__refreshUI();
-            }
-
+            if (window.__saveState) window.__saveState();
+            if (window.__refreshUI) window.__refreshUI();
             updateSyncStatus('📥 Dados restaurados da nuvem');
           } else {
-            // Primeiro login: fazer upload dos dados locais
             updateSyncStatus('☁️ Enviando dados locais...');
             syncToFirebase(window.__STATE);
           }
-
-          // Configurar listener em tempo real
           setupRealtimeListener(user);
         })
-        .finally(function() {
-          isRestoring = false;
-        });
+        .finally(function() { isRestoring = false; });
 
-      // Mostrar status
-      const statusEl = document.getElementById('firebase-sync-status');
-      if (statusEl) {
-        statusEl.style.display = '';
-      }
+      var statusEl = document.getElementById('firebase-sync-status');
+      if (statusEl) statusEl.style.display = '';
     } else {
-      // Logged out
       if (unsubscribeSnapshot) {
         unsubscribeSnapshot();
         unsubscribeSnapshot = null;
       }
-
-      const statusEl = document.getElementById('firebase-sync-status');
+      var statusEl = document.getElementById('firebase-sync-status');
       if (statusEl) {
         statusEl.textContent = '🔴 Não conectado';
         statusEl.style.opacity = '0.6';
@@ -282,15 +244,13 @@
   // ==================================================================
 
   function init() {
-    // Listen for auth changes
     window.addEventListener('auth-state-changed', onAuthChanged);
 
     // Hook into saveState
-    const originalSaveState = window.__saveState;
-    if (originalSaveState) {
+    var originalSaveState = window.__saveState;
+    if (typeof originalSaveState === 'function') {
       window.__saveState = function() {
         originalSaveState();
-        // Debounced sync to Firebase
         if (auth.currentUser && window.__STATE) {
           debouncedSync(window.__STATE);
         }
@@ -305,16 +265,15 @@
       }
     };
 
-    // Create sync status element if not exists
+    // Create sync status element if needed
     if (!document.getElementById('firebase-sync-status')) {
-      const el = document.createElement('div');
+      var el = document.createElement('div');
       el.id = 'firebase-sync-status';
       el.className = 'firebase-sync-status';
       el.textContent = auth.currentUser ? '🟡 Verificando...' : '🔴 Não conectado';
       document.body.appendChild(el);
     }
 
-    // Inicializar estado
     if (auth.currentUser) {
       updateSyncStatus('🟡 Verificando...');
     }
